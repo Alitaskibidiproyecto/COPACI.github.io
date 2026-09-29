@@ -1,0 +1,208 @@
+/* ====== GENERAL ====== */
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Times New Roman", Times, serif;
+    background-color: #f5f0e6;
+    color: #4a1c1c;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ====== ENCABEZADO ====== */
+header {
+    background-color: #6b1f1f; /* rojo vino opaco */
+    color: #d4a017;            /* amarillo mostaza opaco */
+    text-align: center;
+    padding: 25px 15px;
+    border-bottom: 4px solid #d4a017;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    letter-spacing: 4px;
+    font-family: "Times New Roman", Times, serif;
+}
+
+header p {
+    font-size: 1.1rem;
+    font-style: italic;
+    margin-top: 5px;
+    color: #e8c66a;
+}
+
+/* ====== SECCIÓN DE BIENVENIDA ====== */
+#bienvenida {
+    text-align: center;
+    padding: 40px 20px 20px;
+}
+
+#bienvenida h2 {
+    font-size: 2.2rem;
+    color: #6b1f1f;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    position: relative;
+}
+
+/* Brillitos a los lados */
+#bienvenida h2::before,
+#bienvenida h2::after {
+    content: "✦";
+    color: #d4a017;
+    font-size: 1.6rem;
+    text-shadow:
+        0 0 6px #d4a017,
+        0 0 12px #d4a017,
+        0 0 20px #d4a017;
+    animation: brillo 1.8s infinite alternate;
+}
+
+/* Animación para que titilen */
+@keyframes brillo {
+    0% {
+        opacity: 0.4;
+        text-shadow: 0 0 4px #d4a017;
+    }
+    50% {
+        opacity: 1;
+        text-shadow:
+            0 0 8px #d4a017,
+            0 0 16px #d4a017,
+            0 0 28px #d4a017;
+    }
+    100% {
+        opacity: 0.6;
+        text-shadow: 0 0 6px #d4a017;
+    }
+}
+
+#bienvenida p {
+    margin-top: 12px;
+    font-size: 1.1rem;
+    color: #6b1f1f;
+    font-style: italic;
+}
+
+/* ====== FORMULARIO ====== */
+main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+}
+
+#login {
+    background-color: #fffaf0;
+    border: 3px solid #d4a017;
+    border-radius: 12px;
+    padding: 30px 40px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 6px 18px rgba(107, 31, 31, 0.25);
+}
+
+#login h2 {
+    text-align: center;
+    color: #6b1f1f;
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+    border-bottom: 2px dashed #d4a017;
+    padding-bottom: 10px;
+}
+
+/* Labels */
+#login label {
+    display: block;
+    font-weight: bold;
+    color: #6b1f1f;
+    margin-bottom: 6px;
+    font-size: 1.05rem;
+}
+
+/* Inputs y select */
+#login select,
+#login input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 1rem;
+    border: 2px solid #6b1f1f;
+    border-radius: 6px;
+    background-color: #fffdf5;
+    color: #4a1c1c;
+    outline: none;
+    transition: border 0.3s, box-shadow 0.3s;
+}
+
+#login select:focus,
+#login input[type="password"]:focus {
+    border-color: #d4a017;
+    box-shadow: 0 0 8px rgba(212, 160, 23, 0.7);
+}
+
+/* Botones */
+#login button {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 1rem;
+    padding: 10px 20px;
+    margin: 5px 5px 0 0;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+/* Botón Entrar */
+#login button[type="submit"] {
+    background-color: #6b1f1f;
+    color: #d4a017;
+    border-color: #d4a017;
+}
+
+#login button[type="submit"]:hover {
+    background-color: #d4a017;
+    color: #6b1f1f;
+    box-shadow: 0 0 12px rgba(212, 160, 23, 0.8);
+}
+
+/* Botón Limpiar */
+#login button[type="reset"] {
+    background-color: transparent;
+    color: #6b1f1f;
+    border-color: #6b1f1f;
+}
+
+#login button[type="reset"]:hover {
+    background-color: #6b1f1f;
+    color: #fffaf0;
+}
+
+/* ====== MENSAJE DE RESULTADO ====== */
+#mensaje {
+    margin-top: 18px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.05rem;
+    color: #6b1f1f;
+    min-height: 20px;
+}
+
+/* ====== PIE DE PÁGINA ====== */
+footer {
+    background-color: #6b1f1f;
+    color: #d4a017;
+    text-align: center;
+    padding: 15px;
+    font-size: 0.95rem;
+    border-top: 4px solid #d4a017;
+    font-style: italic;
+}

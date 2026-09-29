@@ -1,0 +1,211 @@
+/* ====== GENERAL ====== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Times New Roman", Times, serif;
+    background-color: #f0f4fa;   /* azul muy clarito */
+    color: #1a2e4d;              /* azul oscuro */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ====== ENCABEZADO ====== */
+header {
+    background-color: #1a2e4d;   /* azul opaco */
+    color: #a7c8e8;              /* azul claro opaco */
+    text-align: center;
+    padding: 25px 15px;
+    border-bottom: 4px solid #a7c8e8;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    letter-spacing: 4px;
+    font-family: "Times New Roman", Times, serif;
+}
+
+header p {
+    font-size: 1.1rem;
+    font-style: italic;
+    margin-top: 5px;
+    color: #c8ddf4;
+}
+
+/* ====== NAVEGACIÓN ====== */
+nav {
+    margin-top: 18px;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #1a2e4d;
+    background-color: #a7c8e8;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+nav a:hover {
+    background-color: #1a2e4d;
+    color: #a7c8e8;
+    border-color: #a7c8e8;
+    box-shadow: 0 0 10px rgba(167, 200, 232, 0.8);
+}
+
+/* Botón cerrar sesión */
+header button {
+    margin-top: 15px;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 0.95rem;
+    padding: 8px 18px;
+    background-color: transparent;
+    color: #a7c8e8;
+    border: 2px solid #a7c8e8;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+header button:hover {
+    background-color: #a7c8e8;
+    color: #1a2e4d;
+    box-shadow: 0 0 12px rgba(167, 200, 232, 0.9);
+}
+
+/* ====== CONTENIDO PRINCIPAL ====== */
+main {
+    flex: 1;
+    max-width: 1100px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 30px 20px;
+    text-align: center;
+}
+
+main > h2 {
+    font-size: 2.2rem;
+    color: #1a2e4d;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 8px;
+}
+
+/* Brillitos a los lados del título principal */
+main > h2::before,
+main > h2::after {
+    content: "✦";
+    color: #a7c8e8;
+    font-size: 1.6rem;
+    text-shadow:
+        0 0 6px #a7c8e8,
+        0 0 12px #a7c8e8,
+        0 0 20px #a7c8e8;
+    animation: brillo 1.8s infinite alternate;
+}
+
+@keyframes brillo {
+    0% {
+        opacity: 0.4;
+        text-shadow: 0 0 4px #a7c8e8;
+    }
+    50% {
+        opacity: 1;
+        text-shadow:
+            0 0 8px #a7c8e8,
+            0 0 16px #a7c8e8,
+            0 0 28px #a7c8e8;
+    }
+    100% {
+        opacity: 0.6;
+        text-shadow: 0 0 6px #a7c8e8;
+    }
+}
+
+main > p {
+    font-size: 1.1rem;
+    color: #1a2e4d;
+    font-style: italic;
+    margin-bottom: 30px;
+}
+
+/* ====== SECCIONES ====== */
+section {
+    background-color: #fafcff;
+    border: 3px solid #a7c8e8;
+    border-radius: 12px;
+    padding: 22px 28px;
+    margin-bottom: 25px;
+    text-align: left;
+    box-shadow: 0 6px 18px rgba(26, 46, 77, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+section:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(26, 46, 77, 0.25);
+}
+
+section h3 {
+    font-size: 1.6rem;
+    color: #1a2e4d;
+    border-bottom: 2px dashed #a7c8e8;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+}
+
+section p {
+    font-size: 1rem;
+    color: #2a4a7f;
+    font-style: italic;
+    margin-bottom: 15px;
+}
+
+/* ====== BOTONES DE LAS SECCIONES ====== */
+section button {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 0.95rem;
+    padding: 9px 18px;
+    margin: 5px 6px 5px 0;
+    background-color: #1a2e4d;
+    color: #a7c8e8;
+    border: 2px solid #a7c8e8;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+section button:hover {
+    background-color: #a7c8e8;
+    color: #1a2e4d;
+    box-shadow: 0 0 12px rgba(167, 200, 232, 0.9);
+    transform: scale(1.03);
+}
+
+/* ====== PIE DE PÁGINA ====== */
+footer {
+    background-color: #1a2e4d;
+    color: #a7c8e8;
+    text-align: center;
+    padding: 15px;
+    font-size: 0.95rem;
+    border-top: 4px solid #a7c8e8;
+    font-style: italic;
+}

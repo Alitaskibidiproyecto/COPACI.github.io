@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - COPACI</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+    <!-- ===== ENCABEZADO ===== -->
+    <header>
+        <h1>COPACI</h1>
+        <p>Consejo de Participación Ciudadana</p>
+    </header>
+
+    <!-- ===== BIENVENIDA ===== -->
+    <section id="bienvenida">
+        <h2>Bienvenido</h2>
+        <p>Accede a tu panel según tu rol: Administrador, COPACI o Ciudadano.</p>
+    </section>
+
+    <!-- ===== FORMULARIO DE LOGIN ===== -->
+    <main>
+        <section id="login">
+            <h2>Iniciar Sesión</h2>
+
+            <form id="formLogin">
+                <label for="rol">Selecciona tu rol:</label>
+                <select id="rol" required>
+                    <option value="">-- Elige una opción --</option>
+                    <option value="admin">Administrador</option>
+                    <option value="copaci">COPACI</option>
+                    <option value="ciudadano">Ciudadano</option>
+                </select>
+
+                <br><br>
+
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" placeholder="Tu contraseña">
+
+                <br><br>
+
+                <button type="submit">Entrar</button>
+                <button type="reset">Limpiar</button>
+            </form>
+
+            <p id="mensaje"></p>
+        </section>
+    </main>
+
+    <!-- ===== PIE DE PÁGINA ===== -->
+    <footer>
+        <p>COPACI - Consejo de Participación Ciudadana</p>
+        <p>&copy; 2025</p>
+    </footer>
+
+    <!-- ===== LÓGICA DEL LOGIN ===== -->
+    <script>
+        document.getElementById("formLogin").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const rol = document.getElementById("rol").value;
+            const password = document.getElementById("password").value;
+            const mensaje = document.getElementById("mensaje");
+
+            // Validar que se eligió un rol
+            if (rol === "") {
+                mensaje.textContent = "⚠️ Debes seleccionar un rol.";
+                return;
+            }
+
+            // ===== VALIDACIONES POR ROL =====
+
+            // ADMINISTRADOR → va a copaci.html (que es el del admin)
+            if (rol === "admin") {
+                if (password === "admin1") {
+                    mensaje.textContent = "✅ Bienvenido, Administrador.";
+                    window.location.href = "copaci.html";
+                } else {
+                    mensaje.textContent = "❌ Contraseña incorrecta para Administrador.";
+                }
+            }
+
+            // COPACI → va a copaciverdadero.html (que es el del copaci)
+            else if (rol === "copaci") {
+                if (password === "copaci2") {
+                    mensaje.textContent = "✅ Bienvenido, COPACI.";
+                    window.location.href = "copaciverdadero.html";
+                } else {
+                    mensaje.textContent = "❌ Contraseña incorrecta para COPACI.";
+                }
+            }
+
+            // CIUDADANO → va a ciudadano.html (sin contraseña)
+            else if (rol === "ciudadano") {
+                mensaje.textContent = "✅ Bienvenido, Ciudadano.";
+                window.location.href = "ciudadano.html";
+            }
+        });
+    </script>
+
+</body>
+</html>
