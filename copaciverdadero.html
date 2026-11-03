@@ -4,15 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel COPACI - Consejo de Participación Ciudadana</title>
-    <link rel="stylesheet" href="copaciverdadero.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: "Times New Roman", Times, serif; background-color: #f0f7f0; color: #1a4d1a; min-height: 100vh; display: flex; flex-direction: column; }
+        header { background-color: #1a4d1a; color: #a7e8a7; text-align: center; padding: 25px 15px; border-bottom: 4px solid #a7e8a7; }
+        header h1 { font-size: 2.5rem; letter-spacing: 4px; }
+        header p { font-size: 1.1rem; font-style: italic; margin-top: 5px; color: #c8f4c8; }
+        nav { margin-top: 18px; }
+        nav ul { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+        nav a { text-decoration: none; color: #1a4d1a; background-color: #a7e8a7; padding: 6px 14px; border-radius: 20px; font-size: 0.95rem; font-weight: bold; transition: all 0.3s ease; border: 2px solid transparent; }
+        nav a:hover { background-color: #1a4d1a; color: #a7e8a7; border-color: #a7e8a7; box-shadow: 0 0 10px rgba(167, 232, 167, 0.8); }
+        header button { margin-top: 15px; font-family: "Times New Roman", Times, serif; font-size: 0.95rem; padding: 8px 18px; background-color: transparent; color: #a7e8a7; border: 2px solid #a7e8a7; border-radius: 6px; cursor: pointer; transition: all 0.3s ease; }
+        header button:hover { background-color: #a7e8a7; color: #1a4d1a; box-shadow: 0 0 12px rgba(167, 232, 167, 0.9); }
+        main { flex: 1; max-width: 1100px; width: 100%; margin: 0 auto; padding: 30px 20px; text-align: center; }
+        main > h2 { font-size: 2.2rem; color: #1a4d1a; display: inline-flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 8px; }
+        main > h2::before, main > h2::after { content: "✦"; color: #a7e8a7; font-size: 1.6rem; text-shadow: 0 0 6px #a7e8a7, 0 0 12px #a7e8a7, 0 0 20px #a7e8a7; animation: brillo 1.8s infinite alternate; }
+        @keyframes brillo { 0% { opacity: 0.4; text-shadow: 0 0 4px #a7e8a7; } 50% { opacity: 1; text-shadow: 0 0 8px #a7e8a7, 0 0 16px #a7e8a7, 0 0 28px #a7e8a7; } 100% { opacity: 0.6; text-shadow: 0 0 6px #a7e8a7; } }
+        main > p { font-size: 1.1rem; color: #1a4d1a; font-style: italic; margin-bottom: 30px; }
+        section { background-color: #fafffa; border: 3px solid #a7e8a7; border-radius: 12px; padding: 22px 28px; margin-bottom: 25px; text-align: left; box-shadow: 0 6px 18px rgba(26, 77, 26, 0.15); transition: transform 0.3s ease; }
+        section:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(26, 77, 26, 0.25); }
+        section h3 { font-size: 1.6rem; color: #1a4d1a; border-bottom: 2px dashed #a7e8a7; padding-bottom: 8px; margin-bottom: 12px; }
+        section p { font-size: 1rem; color: #2a6f2a; font-style: italic; margin-bottom: 15px; }
+        section button { font-family: "Times New Roman", Times, serif; font-size: 0.95rem; padding: 9px 18px; margin: 5px 6px 5px 0; background-color: #1a4d1a; color: #a7e8a7; border: 2px solid #a7e8a7; border-radius: 6px; cursor: pointer; transition: all 0.3s ease; }
+        section button:hover { background-color: #a7e8a7; color: #1a4d1a; transform: scale(1.03); }
+        footer { background-color: #1a4d1a; color: #a7e8a7; text-align: center; padding: 15px; font-size: 0.95rem; border-top: 4px solid #a7e8a7; font-style: italic; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); justify-content: center; align-items: center; }
+        .modal-content { background-color: #fff; padding: 30px; border-radius: 10px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        #lienzoFirmaCopaci { border: 2px dashed #1a4d1a; border-radius: 8px; cursor: crosshair; background-color: #f9f9f9; margin: 15px 0; }
+    </style>
 </head>
 <body>
 
-    <!-- ===== ENCABEZADO ===== -->
     <header>
         <h1>COPACI</h1>
         <p>Panel del Consejo de Participación Ciudadana</p>
-
         <nav>
             <ul>
                 <li><a href="#opiniones">Opiniones</a></li>
@@ -25,92 +50,596 @@
             </ul>
         </nav>
         <a href="index.html"> <button> CERRAR SESIÓN </button> </a>
-
     </header>
 
-    <!-- ===== CONTENIDO PRINCIPAL ===== -->
     <main>
-
         <h2>Bienvenido, COPACI</h2>
-        <p>Desde aquí puedes enviar opiniones, solicitar eventos y consultar la información de tu comunidad.</p>
+        <p>Desde aquí puedes responder a los ciudadanos y gestionar la información de tu comunidad.</p>
 
-        <!-- ===== OPINIONES / COMENTARIOS ===== -->
         <section id="opiniones">
             <h3>Opiniones y Comentarios</h3>
-            <p>Envía tus opiniones o comentarios dirigidos al administrador.</p>
-
-            <button>Enviar opinión</button>
-            <button>Ver mis opiniones enviadas</button>
-            <button>Ver respuestas del admin</button>
+            <p>Revisa y responde las opiniones enviadas por los ciudadanos.</p>
+            <button onclick="cargarOpinionesCopaci()">Ver opiniones recibidas</button>
+            <div id="listaOpinionesCopaci" style="margin-top: 20px; text-align: left;"></div>
         </section>
 
-        <!-- ===== SOLICITUD DE EVENTOS ===== -->
         <section id="eventos">
             <h3>Solicitud de Eventos</h3>
             <p>Solicita la realización de eventos para tu comunidad.</p>
-
-            <button>Nueva solicitud de evento</button>
-            <button>Ver mis solicitudes</button>
-            <button>Ver estado de solicitudes</button>
+            <form id="formEvento" style="max-width: 500px; margin-bottom: 20px; text-align: left;">
+                <label for="nombreEvento" style="font-weight: bold; color: #1a4d1a;">Nombre del evento:</label><br>
+                <input type="text" id="nombreEvento" placeholder="Ej. Feria de la Salud" required style="padding: 8px; width: 100%; border: 2px solid #1a4d1a; border-radius: 6px; margin-bottom: 10px;">
+                <label for="fechaEvento" style="font-weight: bold; color: #1a4d1a;">Fecha propuesta:</label><br>
+                <input type="date" id="fechaEvento" required style="padding: 8px; width: 100%; border: 2px solid #1a4d1a; border-radius: 6px; margin-bottom: 10px;">
+                <label for="descEvento" style="font-weight: bold; color: #1a4d1a;">Descripción del evento:</label><br>
+                <textarea id="descEvento" placeholder="Describe de qué trata el evento..." required style="padding: 8px; width: 100%; border: 2px solid #1a4d1a; border-radius: 6px; margin-bottom: 10px; height: 60px;"></textarea>
+                <button type="submit">Nueva solicitud de evento</button>
+            </form>
+            <button onclick="verMisEventosCopaci()">Ver estado de solicitudes</button>
+            <div id="listaEventosCopaci" style="margin-top: 20px; text-align: left;"></div>
         </section>
 
-        <!-- ===== AVISOS A LA COMUNIDAD ===== -->
         <section id="avisos">
             <h3>Avisos a la Comunidad</h3>
-            <p>Consulta los avisos publicados por el administrador.</p>
-
-            <button>Ver avisos</button>
-            <button>Ver avisos recientes</button>
+            <p>Publica avisos importantes o consulta los que ha publicado el administrador.</p>
+            <div style="background: #fafafa; padding: 15px; border-radius: 8px; border: 1px solid #a7e8a7; margin-bottom: 20px;">
+                <h4 style="color: #1a4d1a; margin-bottom: 10px;">Publicar nuevo aviso</h4>
+                <input type="text" id="tituloAvisoCopaci" placeholder="Título del aviso" style="padding: 8px; width: 100%; margin-bottom: 10px; border: 1px solid #1a4d1a; border-radius: 4px;">
+                <textarea id="contenidoAvisoCopaci" placeholder="Escribe el mensaje del aviso aquí..." style="padding: 8px; width: 100%; height: 60px; margin-bottom: 10px; border: 1px solid #1a4d1a; border-radius: 4px;"></textarea>
+                <button onclick="publicarAvisoCopaci()" style="background: #1a4d1a; color: #a7e8a7;">Publicar aviso</button>
+            </div>
+            <button onclick="cargarAvisosCopaci()">Ver todos los avisos</button>
+            <div id="listaAvisosCopaci" style="margin-top: 20px; text-align: left;"></div>
         </section>
 
-        <!-- ===== INFORMES ===== -->
         <section id="informes">
-            <h3>Informes</h3>
-            <p>Consulta los informes trimestrales y de eventos.</p>
-
-            <button>Ver informe trimestral</button>
-            <button>Ver informe de eventos</button>
+            <h3>Redacción de Informes</h3>
+            <p>Crea un informe, fírmalo y envíalo al Administrador para su revisión.</p>
+            <form id="formInforme" style="max-width: 500px; margin-bottom: 20px;">
+                <label style="font-weight: bold; color: #1a4d1a;">Título del Informe:</label><br>
+                <input type="text" id="tituloInforme" required style="padding: 8px; width: 100%; border: 2px solid #1a4d1a; border-radius: 6px; margin-bottom: 10px;">
+                <label style="font-weight: bold; color: #1a4d1a;">Contenido del Informe:</label><br>
+                <textarea id="contenidoInforme" required style="padding: 8px; width: 100%; border: 2px solid #1a4d1a; border-radius: 6px; margin-bottom: 10px; height: 80px;"></textarea>
+                <button type="button" onclick="abrirFirmaInforme()">Firmar Informe</button>
+                <p id="estadoFirma" style="color: red; font-size: 0.9rem;">* Debes firmar el informe antes de enviarlo.</p>
+                <button type="submit" style="background: #1a4d1a; color: #a7e8a7; margin-top: 10px;">Enviar al Admin</button>
+            </form>
+            <button onclick="verMisInformes()">Ver estado de mis informes</button>
+            <div id="listaInformesCopaci" style="margin-top: 20px;"></div>
         </section>
 
-        <!-- ===== TRÁMITE DE DOCUMENTOS ===== -->
         <section id="documentos">
-            <h3>Trámite de Documentos</h3>
-            <p>Consulta y da seguimiento a los trámites de documentos.</p>
-
-            <button>Iniciar trámite</button>
-            <button>Ver mis trámites</button>
-            <button>Consultar estado de trámite</button>
+            <h3>Consulta de Trámites</h3>
+            <p>Revisa el estado de los documentos solicitados por los ciudadanos.</p>
+            <div style="margin-bottom: 20px;">
+                <button onclick="cargarTramitesCopaci('Pendiente')" style="background: #1a4d1a; color: #a7e8a7;">Trámites en Espera</button>
+                <button onclick="cargarTramitesCopaci('Aprobado')" style="background: #2a6f2a; color: #fff;">Trámites Aprobados</button>
+                <button onclick="recordarAdmin()" style="background: transparent; color: #1a4d1a; border: 2px solid #1a4d1a; margin-left: 15px;">🔔 Recordar al Admin</button>
+            </div>
+            <div id="divBuscadorCopaci" style="display: none; margin-bottom: 15px;">
+                <input type="text" id="inputBuscarCopaci" onkeyup="filtrarTramitesCopaci()" placeholder="Buscar por nombre del ciudadano..." style="padding: 8px; width: 100%; max-width: 300px; border: 1px solid #1a4d1a; border-radius: 4px;">
+            </div>
+            <div id="listaTramitesCopaci" style="margin-top: 20px; text-align: left;"></div>
         </section>
 
-        <!-- ===== REPORTES ===== -->
         <section id="reportes">
-            <h3>Reportes</h3>
-            <p>Envía y consulta reportes de tu comunidad.</p>
-
-            <button>Enviar reporte</button>
-            <button>Ver mis reportes</button>
-            <button>Ver estado de reportes</button>
+            <h3>Reportes Ciudadanos</h3>
+            <p>Consulta los reportes de luminarias y bacheo enviados por los vecinos.</p>
+            <button onclick="cargarReportesCopaci()">Ver todos los reportes</button>
+            <div id="listaReportesCopaci" style="margin-top: 20px; text-align: left;"></div>
         </section>
 
-        <!-- ===== MEMBRESÍA ===== -->
+        <!-- ===== MEMBRESÍA (COPACI) ===== -->
         <section id="membresia">
-            <h3>Membresía</h3>
-            <p>Consulta la información sobre la membresía del COPACI.</p>
+            <h3>Gestión de Membresías</h3>
+            <p>Administra los pagos de membresías de los ciudadanos y publica cupones.</p>
+            
+            <div style="margin-bottom: 20px;">
+                <button onclick="cargarMembresiasCopaci()" style="background: #1a4d1a; color: #a7e8a7;">Ver Solicitudes y Miembros</button>
+                <button onclick="mostrarFormCuponCopaci()" style="background: #1a4d1a; color: #a7e8a7;">Publicar Nuevo Cupón</button>
+            </div>
 
-            <button>Ver membresía</button>
-            <button>Solicitar membresía</button>
-            <button>Actualizar datos de membresía</button>
+            <div id="formCuponCopaci" style="display: none; background: #fafafa; padding: 15px; border-radius: 8px; border: 1px solid #a7e8a7; margin-bottom: 20px;">
+                <h4 style="color: #1a4d1a; margin-bottom: 10px;">Crear Cupón de Descuento</h4>
+                <input type="text" id="tituloCuponCopaci" placeholder="Ej. 10% de descuento en Tortillería" style="padding: 8px; width: 100%; margin-bottom: 10px; border: 1px solid #1a4d1a; border-radius: 4px;">
+                <input type="text" id="tiendaCuponCopaci" placeholder="Nombre de la tienda" style="padding: 8px; width: 100%; margin-bottom: 10px; border: 1px solid #1a4d1a; border-radius: 4px;">
+                <button onclick="publicarCuponCopaci()" style="background: #1a4d1a; color: #a7e8a7;">Publicar Cupón</button>
+            </div>
+
+            <div id="listaMembresiasCopaci" style="margin-top: 20px; text-align: left;"></div>
+            <div id="listaCuponesCopaci" style="margin-top: 20px; text-align: left;"></div>
         </section>
-
     </main>
 
-  
-
-    <!-- ===== PIE DE PÁGINA ===== -->
     <footer>
         <p>COPACI - Panel del Consejo de Participación Ciudadana</p>
         <p>&copy; 2025</p>
     </footer>
 
+    <!-- MODAL PARA FIRMAR INFORME -->
+    <div id="modalFirmaInforme" class="modal">
+        <div class="modal-content">
+            <h3 style="color: #1a4d1a; margin-bottom: 10px;">Firmar Informe</h3>
+            <p style="color: #666; font-size: 0.9rem;">Dibuja tu firma electrónica con el mouse.</p>
+            <canvas id="lienzoFirmaCopaci" width="400" height="200"></canvas>
+            <div>
+                <button onclick="limpiarLienzoCopaci()" style="background: #ccc; color: #333; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-right: 10px;">Limpiar</button>
+                <button onclick="guardarFirmaInforme()" style="background: #1a4d1a; color: #a7e8a7; border: 2px solid #a7e8a7; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Guardar Firma</button>
+                <button onclick="cerrarModalFirma()" style="background: transparent; color: #1a4d1a; border: 1px solid #1a4d1a; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-left: 10px;">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- LÓGICA DE MEMBRESÍAS Y CUPONES (COPACI) ---
+        function cargarMembresiasCopaci() {
+            let membresias = localStorage.getItem("membresiasCOPACI");
+            membresias = membresias ? JSON.parse(membresias) : [];
+            const contenedor = document.getElementById("listaMembresiasCopaci");
+            document.getElementById("listaCuponesCopaci").innerHTML = ""; 
+
+            if (membresias.length === 0) {
+                contenedor.innerHTML = "<p>No hay solicitudes de membresía.</p>";
+                return;
+            }
+
+            contenedor.innerHTML = "<h4 style='color: #1a4d1a;'>Solicitudes y Miembros:</h4>";
+            membresias.forEach((mem, index) => {
+                let color = mem.estado === 'Pendiente de Pago' ? 'orange' : 'green';
+                let botones = "";
+
+                if (mem.estado === "Pendiente de Pago") {
+                    botones = `<button onclick="activarMembresiaCopaci(${index})" style="background: #1a4d1a; color: #a7e8a7; border: 2px solid #a7e8a7; padding: 8px; border-radius: 5px; cursor: pointer; margin-top: 10px;">Registrar Pago y Activar</button>`;
+                } else {
+                    botones = `<button onclick="cancelarMembresiaCopaci(${index})" style="background: transparent; color: red; border: 1px solid red; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-top: 10px;">Cancelar Membresía</button>`;
+                }
+
+                contenedor.innerHTML += `
+                    <div style="border: 2px solid #a7e8a7; padding: 15px; margin-bottom: 15px; border-radius: 8px; background: #fff;">
+                        <h4 style="color: #1a4d1a; margin-top: 0;">${mem.ciudadano} (${mem.correo})</h4>
+                        <p><strong>Folio de Pago:</strong> ${mem.folioPago}</p>
+                        <p><strong>Fecha de Solicitud:</strong> ${mem.fechaSolicitud}</p>
+                        <p><strong>Estado:</strong> <span style="color: ${color}; font-weight: bold;">${mem.estado}</span></p>
+                        ${botones}
+                    </div>
+                `;
+            });
+            cargarCuponesCopaci();
+        }
+
+        function activarMembresiaCopaci(index) {
+            let membresias = JSON.parse(localStorage.getItem("membresiasCOPACI"));
+            membresias[index].estado = "Activa - Miembro Premium ✅";
+            membresias[index].fechaActivacion = new Date().toLocaleDateString('es-MX');
+            localStorage.setItem("membresiasCOPACI", JSON.stringify(membresias));
+            alert("✅ Pago registrado. El ciudadano ahora es Miembro Premium.");
+            cargarMembresiasCopaci();
+        }
+
+        function cancelarMembresiaCopaci(index) {
+            if (confirm("¿Seguro que deseas cancelar esta membresía?")) {
+                let membresias = JSON.parse(localStorage.getItem("membresiasCOPACI"));
+                membresias[index].estado = "Cancelada ❌";
+                localStorage.setItem("membresiasCOPACI", JSON.stringify(membresias));
+                cargarMembresiasCopaci();
+            }
+        }
+
+        function mostrarFormCuponCopaci() {
+            const form = document.getElementById("formCuponCopaci");
+            form.style.display = form.style.display === "none" ? "block" : "none";
+        }
+
+        function publicarCuponCopaci() {
+            const titulo = document.getElementById("tituloCuponCopaci").value;
+            const tienda = document.getElementById("tiendaCuponCopaci").value;
+
+            if (titulo === "" || tienda === "") {
+                alert("Llena los datos del cupón.");
+                return;
+            }
+
+            const nuevoCupon = {
+                id: "CUP-" + Math.floor(Math.random() * 9000 + 1000),
+                titulo: titulo,
+                tienda: tienda
+            };
+
+            let cupones = localStorage.getItem("cuponesCOPACI");
+            cupones = cupones ? JSON.parse(cupones) : [];
+            cupones.push(nuevoCupon);
+            localStorage.setItem("cuponesCOPACI", JSON.stringify(cupones));
+
+            alert("✅ Cupón publicado para los miembros.");
+            document.getElementById("tituloCuponCopaci").value = "";
+            document.getElementById("tiendaCuponCopaci").value = "";
+            mostrarFormCuponCopaci();
+            cargarCuponesCopaci();
+        }
+
+        function cargarCuponesCopaci() {
+            let cupones = localStorage.getItem("cuponesCOPACI");
+            cupones = cupones ? JSON.parse(cupones) : [];
+            const contenedor = document.getElementById("listaCuponesCopaci");
+
+            if (cupones.length === 0) return;
+
+            contenedor.innerHTML = "<h4 style='color: #1a4d1a;'>Cupones Activos:</h4>";
+            cupones.forEach((cup, index) => {
+                contenedor.innerHTML += `
+                    <div style="border: 2px dashed #a7e8a7; padding: 10px; margin-bottom: 10px; border-radius: 8px; background: #f0f7f0; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong style="color: #1a4d1a;">${cup.titulo}</strong><br>
+                            <span style="font-size: 0.85rem;">Tienda: ${cup.tienda}</span>
+                        </div>
+                        <button onclick="eliminarCuponCopaci(${index})" style="background: transparent; color: red; border: none; font-size: 1.2rem; cursor: pointer;">✖</button>
+                    </div>
+                `;
+            });
+        }
+
+        function eliminarCuponCopaci(index) {
+            if (confirm("¿Eliminar este cupón?")) {
+                let cupones = JSON.parse(localStorage.getItem("cuponesCOPACI"));
+                cupones.splice(index, 1);
+                localStorage.setItem("cuponesCOPACI", JSON.stringify(cupones));
+                cargarCuponesCopaci();
+            }
+        }
+
+        // --- AVISOS (COPACI PUEDE PUBLICAR) ---
+        function publicarAvisoCopaci() {
+            const titulo = document.getElementById("tituloAvisoCopaci").value;
+            const contenido = document.getElementById("contenidoAvisoCopaci").value;
+
+            if (titulo === "" || contenido === "") {
+                alert("Por favor, llena el título y el contenido del aviso.");
+                return;
+            }
+
+            const nuevoAviso = {
+                id: "AV-" + Math.floor(Math.random() * 9000 + 1000),
+                titulo: titulo,
+                contenido: contenido,
+                autor: "COPACI", 
+                fecha: new Date().toLocaleDateString('es-MX')
+            };
+
+            let avisos = localStorage.getItem("avisosCOPACI");
+            avisos = avisos ? JSON.parse(avisos) : [];
+            avisos.push(nuevoAviso);
+            localStorage.setItem("avisosCOPACI", JSON.stringify(avisos));
+
+            alert("✅ Aviso publicado con éxito.");
+            document.getElementById("tituloAvisoCopaci").value = "";
+            document.getElementById("contenidoAvisoCopaci").value = "";
+            cargarAvisosCopaci();
+        }
+
+        function cargarAvisosCopaci() {
+            let avisos = localStorage.getItem("avisosCOPACI");
+            avisos = avisos ? JSON.parse(avisos) : [];
+            const contenedor = document.getElementById("listaAvisosCopaci");
+
+            if (avisos.length === 0) {
+                contenedor.innerHTML = "<p>No hay avisos publicados aún.</p>";
+                return;
+            }
+
+            contenedor.innerHTML = "";
+            avisos.forEach(aviso => {
+                let autor = aviso.autor ? aviso.autor : "Admin";
+                let colorEtiqueta = autor === "COPACI" ? "#1a4d1a" : "#4a1a4d"; 
+                
+                contenedor.innerHTML += `
+                    <div style="border: 2px solid #a7e8a7; padding: 15px; margin-bottom: 15px; border-radius: 8px; background: #fff;">
+                        <span style="background: ${colorEtiqueta}; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">Publicado por: ${autor}</span>
+                        <h4 style="color: #1a4d1a; margin-top: 10px;">${aviso.titulo}</h4>
+                        <p style="font-size: 0.9rem; color: #666;"><strong>Fecha:</strong> ${aviso.fecha}</p>
+                        <p style="font-style: italic; background: #f9f9f9; padding: 10px; border-left: 3px solid #a7e8a7;">"${aviso.contenido}"</p>
+                    </div>
+                `;
+            });
+        }
+
+        // --- LÓGICA DE INFORMES (COPACI) ---
+        let firmaInformeBase64 = ""; 
+        const canvasInforme = document.getElementById("lienzoFirmaCopaci");
+        const ctxInforme = canvasInforme.getContext("2d");
+        let dibujandoInforme = false;
+        ctxInforme.lineWidth = 3; ctxInforme.lineCap = "round"; ctxInforme.strokeStyle = "#1a4d1a";
+
+        canvasInforme.addEventListener("mousedown", (e) => { dibujandoInforme = true; ctxInforme.beginPath(); ctxInforme.moveTo(e.offsetX, e.offsetY); });
+        canvasInforme.addEventListener("mousemove", (e) => { if (dibujandoInforme) { ctxInforme.lineTo(e.offsetX, e.offsetY); ctxInforme.stroke(); } });
+        canvasInforme.addEventListener("mouseup", () => { dibujandoInforme = false; });
+        canvasInforme.addEventListener("mouseout", () => { dibujandoInforme = false; });
+
+        function abrirFirmaInforme() { document.getElementById("modalFirmaInforme").style.display = "flex"; }
+        function limpiarLienzoCopaci() { ctxInforme.clearRect(0, 0, canvasInforme.width, canvasInforme.height); }
+        function cerrarModalFirma() { document.getElementById("modalFirmaInforme").style.display = "none"; limpiarLienzoCopaci(); }
+
+        function guardarFirmaInforme() {
+            firmaInformeBase64 = canvasInforme.toDataURL("image/png");
+            document.getElementById("estadoFirma").textContent = "✅ Informe firmado correctamente.";
+            document.getElementById("estadoFirma").style.color = "green";
+            cerrarModalFirma();
+        }
+
+        document.getElementById("formInforme").addEventListener("submit", function(e) {
+            e.preventDefault();
+            if (firmaInformeBase64 === "") {
+                alert("Por favor, firma el informe antes de enviarlo.");
+                return;
+            }
+            const titulo = document.getElementById("tituloInforme").value;
+            const contenido = document.getElementById("contenidoInforme").value;
+
+            const nuevoInforme = {
+                id: "INF-" + Math.floor(Math.random() * 9000 + 1000),
+                titulo: titulo,
+                contenido: contenido,
+                fecha: new Date().toLocaleDateString('es-MX'),
+                firmaCopaci: firmaInformeBase64,
+                estado: "Pendiente de revisión",
+                comentarioAdmin: ""
+            };
+
+            let informes = localStorage.getItem("informesCOPACI");
+            informes = informes ? JSON.parse(informes) : [];
+            informes.push(nuevoInforme);
+            localStorage.setItem("informesCOPACI", JSON.stringify(informes));
+
+            alert("✅ Informe enviado al Administrador.");
+            document.getElementById("formInforme").reset();
+            document.getElementById("estadoFirma").textContent = "* Debes firmar el informe antes de enviarlo.";
+            document.getElementById("estadoFirma").style.color = "red";
+            firmaInformeBase64 = "";
+            verMisInformes();
+        });
+
+        function verMisInformes() {
+            let informes = localStorage.getItem("informesCOPACI");
+            informes = informes ? JSON.parse(informes) : [];
+            const contenedor = document.getElementById("listaInformesCopaci");
+
+            if (informes.length === 0) {
+                contenedor.innerHTML = "<p>No has enviado ningún informe.</p>";
+                return;
+            }
+
+            contenedor.innerHTML = "";
+            informes.forEach(inf => {
+                let color = inf.estado === 'Pendiente de revisión' ? 'orange' : (inf.estado.includes('Aprobado') ? 'green' : 'red');
+                let comentario = inf.comentarioAdmin ? `<p style="color: #4a1a4d; background: #fdf0f6; padding: 8px; border-radius: 4px;"><strong>Respuesta del Admin:</strong> ${inf.comentarioAdmin}</p>` : "";
+
+                contenedor.innerHTML += `
+                    <div style="border: 2px solid #a7e8a7; padding: 15px; margin-bottom: 15px; border-radius: 8px; background: #fff;">
+                        <h4 style="color: #1a4d1a; margin-top: 0;">${inf.titulo}</h4>
+                        <p><strong>Fecha:</strong> ${inf.fecha}</p>
+                        <p><strong>Estado:</strong> <span style="color: ${color}; font-weight: bold;">${inf.estado}</span></p>
+                        ${comentario}
+                        <div style="margin-top: 10px; border-top: 1px dashed #ccc; padding-top: 10px;">
+                            <p style="font-size: 0.9rem; margin-bottom: 5px;">Mi firma:</p>
+                            <img src="${inf.firmaCopaci}" style="max-height: 50px;">
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // --- RECORDAR AL ADMIN ---
+        function recordarAdmin() {
+            localStorage.setItem("recordatorioAdmin", "true");
+            alert("🔔 Se ha enviado una notificación al Administrador.");
+        }
+
+        // --- TRÁMITES ---
+        let filtroEstadoCopaci = "Pendiente";
+
+        function cargarTramitesCopaci(estado) {
+            filtroEstadoCopaci = estado;
+            const contenedor = document.getElementById("listaTramitesCopaci");
+            const divBuscador = document.getElementById("divBuscadorCopaci");
+
+            if (estado === 'Aprobado') {
+                divBuscador.style.display = "block";
+                document.getElementById("inputBuscarCopaci").value = "";
+            } else {
+                divBuscador.style.display = "none";
+            }
+
+            let tramites = localStorage.getItem("tramitesCOPACI");
+            tramites = tramites ? JSON.parse(tramites) : [];
+
+            let tramitesFiltrados = tramites.filter(t => t.estado.includes(estado));
+
+            if (tramitesFiltrados.length === 0) {
+                contenedor.innerHTML = `<p>No hay trámites ${estado.toLowerCase()}s.</p>`;
+                return;
+            }
+
+            contenedor.innerHTML = ""; 
+            tramitesFiltrados.forEach((tra) => {
+                contenedor.innerHTML += `
+                    <div class="tramite-card-copaci" data-nombre="${tra.ciudadano.toLowerCase()}" style="border: 2px solid #a7e8a7; padding: 15px; margin-bottom: 15px; border-radius: 8px; background: #fff;">
+                        <h4 style="color: #1a4d1a; margin-top: 0;">Folio: ${tra.folio}</h4>
+                        <p><strong>Solicitante:</strong> ${tra.ciudadano}</p>
+                        <p><strong>Documento:</strong> ${tra.tipo}</p>
+                        <p><strong>Fecha de solicitud:</strong> ${tra.fecha}</p>
+                        <p><strong>Estado:</strong> <span style="color: ${tra.estado === 'Pendiente' ? 'orange' : 'green'}; font-weight: bold;">${tra.estado}</span></p>
+                        ${tra.firmaAdmin ? `<p style="color: green;"><strong>Firmado por el Admin ✅</strong></p>` : ''}
+                    </div>
+                `;
+            });
+        }
+
+        function filtrarTramitesCopaci() {
+            const texto = document.getElementById("inputBuscarCopaci").value.toLowerCase();
+            const tarjetas = document.querySelectorAll(".tramite-card-copaci");
+            
+            tarjetas.forEach(tarjeta => {
+                const nombre = tarjeta.getAttribute("data-nombre");
+                if (nombre.includes(texto)) { tarjeta.style.display = "block"; } else { tarjeta.style.display = "none"; }
+            });
+        }
+
+        // --- OPINIONES ---
+        function cargarOpinionesCopaci() {
+            let opiniones = localStorage.getItem("opinionesCOPACI");
+            opiniones = opiniones ? JSON.parse(opiniones) : [];
+            const contenedor = document.getElementById("listaOpinionesCopaci");
+
+            if (opiniones.length === 0) { contenedor.innerHTML = "<p>No hay opiniones recibidas.</p>"; return; }
+
+            contenedor.innerHTML = ""; 
+            opiniones.forEach((op, index) => {
+                let respuestaAdminHTML = op.respuestaAdmin 
+                    ? `<p style="color: #4a1a4d; margin-top: 5px; font-size: 0.9rem;"><strong>El Admin respondió:</strong> ${op.respuestaAdmin}</p>` 
+                    : "";
+
+                let respuestaHTML = op.respuesta 
+                    ? `<p style="color: #1a4d1a; margin-top: 5px;"><strong>Respuesta del COPACI:</strong> ${op.respuesta}</p> 
+                       <button onclick="editarRespuestaCopaci(${index})" style="background: transparent; color: #1a4d1a; border: 1px solid #1a4d1a; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; margin-top: 5px;">Editar respuesta</button>` 
+                    : `<div style="margin-top: 10px;">
+                        <input type="text" id="respuesta-copaci-${index}" placeholder="Escribe una respuesta..." style="padding: 8px; width: 70%; border: 1px solid #1a4d1a; border-radius: 4px;">
+                        <button onclick="responderOpinionCopaci(${index})" style="background: #1a4d1a; color: #a7e8a7; border: 2px solid #a7e8a7; padding: 8px; border-radius: 5px; cursor: pointer;">Responder</button>
+                       </div>`;
+
+                contenedor.innerHTML += `
+                    <div style="border: 2px solid #a7e8a7; padding: 15px; margin-bottom: 15px; border-radius: 8px; background: #fff;">
+                        <h4 style="color: #1a4d1a; margin-top: 0;">Opinión de: ${op.autor} (${op.fecha})</h4>
+                        <p style="font-style: italic;">"${op.texto}"</p>
+                        ${respuestaAdminHTML}
+                        <hr style="border: 0; border-top: 1px dashed #a7e8a7; margin: 10px 0;">
+                        ${respuestaHTML}
+                    </div>
+                `;
+            });
+        }
+
+        function responderOpinionCopaci(index) {
+            const textoRespuesta = document.getElementById(`respuesta-copaci-${index}`).value;
+            if (textoRespuesta.trim() === "") { alert("Escribe una respuesta antes de enviar."); return; }
+            let opiniones = JSON.parse(localStorage.getItem("opinionesCOPACI"));
+            opiniones[index].respuesta = textoRespuesta;
+            localStorage.setItem("opinionesCOPACI", JSON.stringify(opiniones));
+            cargarOpinionesCopaci();
+        }
+
+        function editarRespuestaCopaci(index) {
+            let opiniones = JSON.parse(localStorage.getItem("opinionesCOPACI"));
+            let nuevaRespuesta = prompt("Edita tu respuesta:", opiniones[index].respuesta);
+            if (nuevaRespuesta !== null && nuevaRespuesta.trim() !== "") {
+                opiniones[index].respuesta = nuevaRespuesta;
+                localStorage.setItem("opinionesCOPACI", JSON.stringify(opiniones));
+                cargarOpinionesCopaci();
+            }
+        }
+
+        // --- REPORTES ---
+        function cargarReportesCopaci() {
+            let reportes = localStorage.getItem("reportesCOPACI");
+            reportes = reportes ? JSON.parse(reportes) : [];
+            const contenedor = document.getElementById("listaReportesCopaci");
+
+            if (reportes.length === 0) { contenedor.innerHTML = "<p>No hay reportes pendientes por el momento.</p>"; return; }
+
+            contenedor.innerHTML = ""; 
+            reportes.forEach((rep, index) => {
+                contenedor.innerHTML += `
+                    <div style="border: 2px solid #a7e8a7; padding: 15px; margin-bottom: 15px; border-radius: 8px; background: #fff;">
+                        <h4 style="color: #1a4d1a; margin-top: 0;">Folio: ${rep.id} - ${rep.tipo}</h4>
+                        <p><strong>Reporta:</strong> ${rep.ciudadano}</p>
+                        <p><strong>Ubicación:</strong> ${rep.ubicacion}</p>
+                        <p><strong>Descripción:</strong> ${rep.descripcion}</p>
+                        <p><strong>Fecha:</strong> ${rep.fecha}</p>
+                        <p><strong>Estado:</strong> <span style="color: ${rep.estado === 'Pendiente' ? 'red' : 'green'}; font-weight: bold;">${rep.estado}</span></p>
+                        ${rep.estado === 'Pendiente' ? `<button onclick="cambiarEstadoCopaci(${index})" style="background: #1a4d1a; color: #a7e8a7; border: 2px solid #a7e8a7; padding: 8px; border-radius: 5px; cursor: pointer; margin-top: 10px;">Marcar como Resuelto</button>` : ''}
+                    </div>
+                `;
+            });
+        }
+
+        function cambiarEstadoCopaci(index) {
+            let reportes = JSON.parse(localStorage.getItem("reportesCOPACI"));
+            reportes[index].estado = "Resuelto ✅";
+            localStorage.setItem("reportesCOPACI", JSON.stringify(reportes));
+            cargarReportesCopaci();
+        }
+
+        // --- EVENTOS ---
+        document.getElementById("formEvento").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const nombre = document.getElementById("nombreEvento").value;
+            const fecha = document.getElementById("fechaEvento").value;
+            const desc = document.getElementById("descEvento").value;
+
+            const nuevoEvento = {
+                id: "EV-" + Math.floor(Math.random() * 9000 + 1000),
+                nombre: nombre,
+                fecha: fecha,
+                descripcion: desc,
+                solicitante: "COPACI",
+                estado: "Pendiente",
+                firmaAdmin: ""
+            };
+
+            let eventos = localStorage.getItem("eventosCOPACI");
+            eventos = eventos ? JSON.parse(eventos) : [];
+            eventos.push(nuevoEvento);
+            localStorage.setItem("eventosCOPACI", JSON.stringify(eventos));
+
+            alert("✅ Evento solicitado con éxito. Espera la aprobación del Admin.");
+            document.getElementById("formEvento").reset();
+            verMisEventosCopaci();
+        });
+
+        function verMisEventosCopaci() {
+            let eventos = localStorage.getItem("eventosCOPACI");
+            eventos = eventos ? JSON.parse(eventos) : [];
+            const contenedor = document.getElementById("listaEventosCopaci");
+
+            if (eventos.length === 0) {
+                contenedor.innerHTML = "<p>No has solicitado eventos aún.</p>";
+                return;
+            }
+
+            contenedor.innerHTML = "";
+            eventos.forEach(ev => {
+                let color = ev.estado === 'Pendiente' ? 'orange' : (ev.estado.includes('Aprobado') ? 'green' : 'red');
+                
+                let constanciaHTML = "";
+                if (ev.estado === "Aprobado ✅" || ev.estado === "Desaprobado ❌") {
+                    let colorSello = ev.estado.includes("Aprobado") ? "green" : "red";
+                    let firmaHTML = ev.firmaAdmin ? `<img src="${ev.firmaAdmin}" style="max-height: 60px; display: block; margin: 0 auto 5px auto;">` : "";
+                    
+                    constanciaHTML = `
+                        <div style="margin-top: 15px; border: 2px solid #ccc; padding: 20px; background: #fafafa; border-radius: 8px; position: relative; text-align: center;">
+                            <h4 style="color: #333; text-transform: uppercase; margin-bottom: 10px;">Constancia de Evento</h4>
+                            <p style="font-size: 0.9rem; color: #555;">Se hace constar que el evento <strong>"${ev.nombre}"</strong> ha sido revisado por la mesa directiva.</p>
+                            <div style="position: absolute; top: 10px; right: 10px; border: 3px solid ${colorSello}; color: ${colorSello}; font-size: 1.2rem; font-weight: bold; padding: 5px 10px; transform: rotate(-15deg); opacity: 0.7; border-radius: 5px; text-transform: uppercase;">
+                                ${ev.estado.includes("Aprobado") ? "Aprobado" : "Desaprobado"}
+                            </div>
+                            <div style="margin-top: 20px;">
+                                ${firmaHTML}
+                                <p style="font-size: 0.8rem; color: #777;">Firma del Administrador</p>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                contenedor.innerHTML += `
+                    <div style="border: 2px solid #a7e8a7; padding: 15px; margin-bottom: 10px; border-radius: 8px; background: #fff;">
+                        <h4 style="color: #1a4d1a; margin-top: 0;">Evento: ${ev.nombre}</h4>
+                        <p><strong>Fecha:</strong> ${ev.fecha}</p>
+                        <p><strong>Descripción:</strong> ${ev.descripcion}</p>
+                        <p><strong>Estado:</strong> <span style="color: ${color}; font-weight: bold;">${ev.estado}</span></p>
+                        
+                        ${constanciaHTML}
+                    </div>
+                `;
+            });
+        }
+    </script>
 </body>
 </html>

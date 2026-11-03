@@ -5,87 +5,522 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Ciudadano - COPACI</title>
     <link rel="stylesheet" href="ciudadano.css">
+    <style>
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); justify-content: center; align-items: center; }
+        .modal-content { background-color: #fff; padding: 30px; border-radius: 10px; text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.3); max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; }
+        .item-tramite { border: 2px solid #1a2e4d; padding: 15px; margin-bottom: 10px; border-radius: 8px; cursor: pointer; }
+        .item-tramite:hover { background-color: #f0f4fa; }
+        .gafete { border: 4px solid #1a2e4d; border-radius: 15px; padding: 20px; background: linear-gradient(135deg, #ffffff, #e6f0fa); text-align: center; margin: 0 auto; max-width: 400px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .cupon { background: #fff; border: 2px dashed #1a2e4d; padding: 15px; border-radius: 8px; margin-bottom: 10px; position: relative; text-align: left;}
+        .cupon::before { content: "🎟️"; position: absolute; right: 15px; top: 15px; font-size: 1.5rem; }
+        .anuncio { background: #ffe6e6; border: 2px solid #ff9999; padding: 15px; text-align: center; border-radius: 8px; margin-bottom: 20px; color: #cc0000; font-weight: bold; }
+    </style>
 </head>
 <body>
 
-    <!-- ===== ENCABEZADO ===== -->
     <header>
         <h1>COPACI</h1>
         <p>Panel del Ciudadano</p>
-
         <nav>
             <ul>
                 <li><a href="#opiniones">Opiniones</a></li>
-                <li><a href="#documentos">Trámite de Documentos</a></li>
+                <li><a href="#documentos">Trámites</a></li>
                 <li><a href="#reportes">Reportes</a></li>
                 <li><a href="#eventos">Eventos</a></li>
+                <li><a href="#avisos">Avisos</a></li>
                 <li><a href="#membresia">Membresía</a></li>
             </ul>
         </nav>
-<a href="index.html"> <button> CERRAR SESIÓN </button> </a>
-        
+        <a href="index.html"> <button> CERRAR SESIÓN </button> </a>
     </header>
 
-    <!-- ===== CONTENIDO PRINCIPAL ===== -->
     <main>
+        <!-- ANUNCIO PARA USUARIOS SIN MEMBRESÍA -->
+        <div id="espacioAnuncio" class="anuncio" style="display: none;">
+            📢 ¡Hazte Miembro Premium del COPACI y quita este anuncio! Obtén cupones y atención prioritaria. <br> <small>(Este es un espacio publicitario simulado).</small>
+        </div>
 
-        <h2>Bienvenido, Ciudadano</h2>
+        <h2 id="saludoBienvenida">Bienvenido, Ciudadano</h2>
         <p>Desde aquí puedes enviar tus opiniones, reportes y consultar la información de tu comunidad.</p>
 
-        <!-- ===== OPINIONES / COMENTARIOS ===== -->
+        <!-- ===== MEMBRESÍA ===== -->
+        <section id="membresia">
+            <h3>Membresía del COPACI</h3>
+            <p>Únete al consejo, apoya a tu comunidad y obtén beneficios exclusivos.</p>
+            
+            <div id="panelMembresiaCiudadano">
+                <button onclick="solicitarMembresia()" id="btnSolicitar" style="background: #1a2e4d; color: #a7c8e8;">Solicitar membresía</button>
+                <button onclick="verMiMembresia()" style="background: #1a2e4d; color: #a7c8e8;">Ver mi membresía y cupones</button>
+                <div id="vistaMembresia" style="margin-top: 20px;"></div>
+            </div>
+        </section>
+
+        <!-- ===== OPINIONES ===== -->
         <section id="opiniones">
             <h3>Opiniones y Comentarios</h3>
             <p>Envía tus opiniones o comentarios dirigidos al COPACI.</p>
-
-            <button>Enviar opinión</button>
-            <button>Ver mis opiniones enviadas</button>
-            <button>Ver respuestas del COPACI</button>
+            <form id="formOpinion" style="text-align: left; max-width: 500px; margin: 0 auto 20px auto;">
+                <label for="textoOpinion">Tu opinión:</label>
+                <textarea id="textoOpinion" required style="padding: 8px; width: 100%; font-family: 'Times New Roman'; border: 2px solid #1a2e4d; border-radius: 6px; height: 80px;" placeholder="Escribe aquí tu comentario para el COPACI..."></textarea>
+                <br><br>
+                <button type="submit" style="background-color: #1a2e4d; color: #a7c8e8; padding: 10px 20px; border: 2px solid #a7c8e8; border-radius: 6px; cursor: pointer; font-family: 'Times New Roman'; font-size: 1rem;">Enviar opinión</button>
+            </form>
+            <p id="mensajeOpinion" style="font-weight: bold; color: green;"></p>
+            <div style="text-align: left; max-width: 600px; margin: 0 auto;">
+                <h4>Mis opiniones anteriores:</h4>
+                <div id="listaOpinionesCiudadano"></div>
+            </div>
         </section>
 
-        <!-- ===== TRÁMITE DE DOCUMENTOS ===== -->
+        <!-- ===== DOCUMENTOS ===== -->
         <section id="documentos">
             <h3>Trámite de Documentos</h3>
-            <p>Consulta el estado de tus trámites de documentos.</p>
+            <p>Selecciona el tipo de documento que necesitas y genera tu solicitud.</p>
+            <select id="tipoDocumento" style="padding: 8px; font-family: 'Times New Roman'; margin-bottom: 10px; width: 100%; max-width: 300px; border: 2px solid #1a2e4d; border-radius: 6px;">
+                <option value="Constancia de Residencia">Constancia de Residencia</option>
+                <option value="Constancia de Buena Conducta">Constancia de Buena Conducta</option>
+                <option value="Constancia de Vecindad">Constancia de Vecindad</option>
+            </select>
+            <br>
+            <button onclick="generarConstancia()">Iniciar Trámite</button>
+            <button onclick="abrirModalTramites()">Trámites en espera</button>
 
-            <button>Ver mis trámites</button>
-            <button>Consultar estado de trámite</button>
+            <div id="vistaPreviaConstancia" style="display: none; position: relative; margin-top: 20px; border: 3px solid #1a2e4d; padding: 30px; background: #ffffff; text-align: center; color: #000; font-family: 'Times New Roman', serif; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                <div id="selloAprobado" style="display: none; position: absolute; bottom: 20px; right: 20px; border: 4px solid green; color: green; font-size: 2rem; font-weight: bold; padding: 10px 20px; transform: rotate(-15deg); opacity: 0.7; border-radius: 10px; text-transform: uppercase;">Aprobado</div>
+                <h2 style="font-size: 1.8rem; margin-bottom: 20px; text-transform: uppercase; color: #000;">COPACI</h2>
+                <h3 id="tituloConstancia" style="font-size: 1.4rem; margin-bottom: 30px; color: #1a2e4d;"></h3>
+                <p style="text-align: justify; font-size: 1.1rem; line-height: 1.6;">A quien corresponda:<br><br>Se hace constar que el(la) ciudadano(a) <strong><span id="nombreCiudadano"></span></strong>, con domicilio en <strong><span id="direccionCiudadano"></span></strong>, es residente de esta comunidad y se encuentra registrado(a) en el padrón de vecinos de este Consejo.</p>
+                <br><br>
+                <div style="display: flex; justify-content: space-between; margin-top: 40px; font-size: 1rem; text-align: left;">
+                    <div><p><strong>Folio único:</strong></p><p id="folioGenerado" style="font-size: 1.2rem; color: #1a2e4d; font-weight: bold;"></p></div>
+                    <div><p><strong>Fecha de expedición:</strong></p><p id="fechaGenerada"></p></div>
+                </div>
+                <br><br><br>
+                <div style="text-align: center; margin-top: 30px;">
+                    <div id="contenedorFirma" style="margin-bottom: 10px;"><img id="imagenFirma" src="" style="display: none; max-height: 100px; margin: 0 auto;"></div>
+                    <p>_________________________________________</p>
+                    <p>Sello y Firma de la Mesa Directiva del COPACI</p>
+                </div>
+            </div>
+            <p id="mensajeTramite" style="margin-top: 15px; font-weight: bold;"></p>
         </section>
 
         <!-- ===== REPORTES ===== -->
         <section id="reportes">
-            <h3>Reportes</h3>
-            <p>Envía y consulta reportes de tu comunidad.</p>
-
-            <button>Enviar reporte</button>
-            <button>Ver mis reportes</button>
-            <button>Ver estado de reportes</button>
+            <h3>Reportes de Servicios Públicos</h3>
+            <p>Reporta fallas de luminarias o baches en tu comunidad.</p>
+            <form id="formReporte" style="text-align: left; max-width: 500px; margin: 0 auto;">
+                <label for="tipoReporte">Tipo de reporte:</label>
+                <select id="tipoReporte" required style="padding: 8px; width: 100%; font-family: 'Times New Roman'; border: 2px solid #1a2e4d; border-radius: 6px;">
+                    <option value="Luminaria">Luminaria descompuesta</option>
+                    <option value="Bache">Bache en la calle</option>
+                </select>
+                <br><br>
+                <label for="ubicacionReporte">Ubicación / Calle:</label>
+                <input type="text" id="ubicacionReporte" placeholder="Ej. Calle Juárez entre Av. Hidalgo y Morelos" required style="padding: 8px; width: 100%; font-family: 'Times New Roman'; border: 2px solid #1a2e4d; border-radius: 6px;">
+                <br><br>
+                <label for="descripcionReporte">Descripción del problema:</label>
+                <textarea id="descripcionReporte" required style="padding: 8px; width: 100%; font-family: 'Times New Roman'; border: 2px solid #1a2e4d; border-radius: 6px; height: 80px;"></textarea>
+                <br><br>
+                <button type="submit" style="background-color: #1a2e4d; color: #a7c8e8; padding: 10px 20px; border: 2px solid #a7c8e8; border-radius: 6px; cursor: pointer; font-family: 'Times New Roman'; font-size: 1rem;">Enviar Reporte</button>
+            </form>
+            <p id="mensajeReporte" style="margin-top: 15px; font-weight: bold;"></p>
         </section>
 
-        <!-- ===== VISUALIZACIÓN DE EVENTOS ===== -->
+        <!-- ===== EVENTOS ===== -->
         <section id="eventos">
-            <h3>Eventos</h3>
+            <h3>Eventos de la Comunidad</h3>
             <p>Consulta los eventos disponibles en tu comunidad.</p>
-
-            <button>Ver eventos</button>
-            <button>Ver próximos eventos</button>
+            <button onclick="verEventosCiudadano()">Ver eventos aprobados</button>
+            <div id="listaEventosCiudadano" style="margin-top: 20px; text-align: left;"></div>
         </section>
 
-        <!-- ===== MEMBRESÍA ===== -->
-        <section id="membresia">
-            <h3>Membresía</h3>
-            <p>Consulta la información sobre la membresía del COPACI.</p>
-
-            <button>Ver membresía</button>
-            <button>Solicitar membresía</button>
+        <!-- ===== AVISOS ===== -->
+        <section id="avisos">
+            <h3>Avisos de la Comunidad</h3>
+            <p>Mantente informado sobre los anuncios del COPACI y el Administrador.</p>
+            <button onclick="cargarAvisosCiudadano()">Ver avisos recientes</button>
+            <div id="listaAvisosCiudadano" style="margin-top: 20px; text-align: left;"></div>
         </section>
-
     </main>
 
-    <!-- ===== PIE DE PÁGINA ===== -->
     <footer>
         <p>COPACI - Panel del Ciudadano</p>
         <p>&copy; 2025</p>
     </footer>
 
+    <div id="modalTramites" class="modal">
+        <div class="modal-content">
+            <h3 style="color: #1a2e4d; margin-bottom: 15px;">Mis Trámites</h3>
+            <div id="listaTramitesCiudadano"></div>
+            <button onclick="cerrarModalTramites()" style="background: #1a2e4d; color: #a7c8e8; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-top: 15px; width: 100%;">Cerrar</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const usuarioActivo = JSON.parse(localStorage.getItem("usuarioActivo"));
+            if (usuarioActivo) {
+                document.getElementById("saludoBienvenida").textContent = "Bienvenido, " + usuarioActivo.nombre;
+            }
+            cargarOpinionesCiudadano();
+            verificarAnuncios(); 
+        });
+
+        // ===== LÓGICA DE MEMBRESÍA Y ANUNCIOS =====
+        function verificarAnuncios() {
+            const usuarioActivo = JSON.parse(localStorage.getItem("usuarioActivo"));
+            if (!usuarioActivo) return;
+
+            let membresias = localStorage.getItem("membresiasCOPACI");
+            membresias = membresias ? JSON.parse(membresias) : [];
+            const miMembresia = membresias.find(m => m.correo === usuarioActivo.correo);
+
+            if (!miMembresia || miMembresia.estado !== "Activa - Miembro Premium ✅") {
+                document.getElementById("espacioAnuncio").style.display = "block";
+            } else {
+                document.getElementById("espacioAnuncio").style.display = "none"; 
+            }
+        }
+
+        function solicitarMembresia() {
+            const usuarioActivo = JSON.parse(localStorage.getItem("usuarioActivo"));
+            let membresias = localStorage.getItem("membresiasCOPACI");
+            membresias = membresias ? JSON.parse(membresias) : [];
+
+            const yaTiene = membresias.find(m => m.correo === usuarioActivo.correo);
+            if (yaTiene && yaTiene.estado !== "Cancelada ❌") {
+                alert("Ya tienes una solicitud en proceso o activa.");
+                return;
+            }
+
+            const folioPago = "PAGO-" + Math.floor(Math.random() * 9000 + 1000);
+            const nuevaMembresia = {
+                folioPago: folioPago,
+                ciudadano: usuarioActivo.nombre,
+                correo: usuarioActivo.correo,
+                fechaSolicitud: new Date().toLocaleDateString('es-MX'),
+                estado: "Pendiente de Pago",
+                fechaActivacion: ""
+            };
+
+            if (yaTiene) {
+                const idx = membresias.findIndex(m => m.correo === usuarioActivo.correo);
+                membresias[idx] = nuevaMembresia;
+            } else {
+                membresias.push(nuevaMembresia);
+            }
+            
+            localStorage.setItem("membresiasCOPACI", JSON.stringify(membresias));
+            
+            alert("✅ Solicitud generada. Tu folio de pago es: " + folioPago + "\n\nAcude a la oficina del COPACI para realizar tu pago.");
+            verMiMembresia();
+        }
+
+        function verMiMembresia() {
+            const usuarioActivo = JSON.parse(localStorage.getItem("usuarioActivo"));
+            let membresias = localStorage.getItem("membresiasCOPACI");
+            membresias = membresias ? JSON.parse(membresias) : [];
+            let cupones = localStorage.getItem("cuponesCOPACI");
+            cupones = cupones ? JSON.parse(cupones) : [];
+            
+            const miMembresia = membresias.find(m => m.correo === usuarioActivo.correo);
+            const contenedor = document.getElementById("vistaMembresia");
+
+            if (!miMembresia) {
+                contenedor.innerHTML = "<p>No tienes ninguna solicitud de membresía activa.</p>";
+                return;
+            }
+
+            if (miMembresia.estado === "Activa - Miembro Premium ✅") {
+                let cuponesHTML = "";
+                if (cupones.length > 0) {
+                    cuponesHTML = "<h4 style='color: #1a2e4d; margin-top: 20px;'>🎁 Tus Cupones de Descuento:</h4>";
+                    cupones.forEach(c => {
+                        cuponesHTML += `
+                            <div class="cupon">
+                                <h4 style="color: #1a2e4d; margin: 0 0 5px 0;">${c.titulo}</h4>
+                                <p style="margin: 0; font-size: 0.9rem; color: #666;">Válido en: <strong>${c.tienda}</strong></p>
+                            </div>
+                        `;
+                    });
+                } else {
+                    cuponesHTML = "<p style='margin-top: 15px;'>Aún no hay cupones disponibles. ¡Vuelve pronto!</p>";
+                }
+
+                contenedor.innerHTML = `
+                    <div class="gafete">
+                        <h2 style="color: #1a2e4d; margin-bottom: 5px;">COPACI</h2>
+                        <h4 style="color: #666; margin-bottom: 15px;">Miembro Premium</h4>
+                        <h3 style="color: #1a2e4d; margin-bottom: 10px;">${miMembresia.ciudadano}</h3>
+                        <p><strong>Folio de Pago:</strong> ${miMembresia.folioPago}</p>
+                        <p><strong>Fecha de Activación:</strong> ${miMembresia.fechaActivacion}</p>
+                        <div style="margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 10px;">
+                            <p style="color: green; font-weight: bold; font-size: 1.2rem;">✅ PAGADO Y ACTIVO</p>
+                            <p style="font-size: 0.8rem; color: #666;">(Anuncios desactivados y acceso prioritario)</p>
+                        </div>
+                    </div>
+                    ${cuponesHTML}
+                `;
+                verificarAnuncios(); 
+            } else if (miMembresia.estado === "Cancelada ❌") {
+                 contenedor.innerHTML = `<p style="color: red;">Tu membresía fue cancelada.</p>`;
+            } else {
+                contenedor.innerHTML = `
+                    <div style="border: 2px solid orange; padding: 15px; border-radius: 8px; background: #fff;">
+                        <h4 style="color: #1a2e4d; margin-top: 0;">Estatus de tu Membresía</h4>
+                        <p><strong>Folio de Pago:</strong> ${miMembresia.folioPago}</p>
+                        <p><strong>Estado:</strong> <span style="color: orange; font-weight: bold;">${miMembresia.estado}</span></p>
+                        <p style="color: #666; font-style: italic;">Acude a la oficina del COPACI con este folio para realizar tu pago y activar tu membresía.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // ===== TRÁMITES =====
+        function generarConstancia() {
+            const usuarioActivo = JSON.parse(localStorage.getItem("usuarioActivo"));
+            if (!usuarioActivo) { alert("Debes iniciar sesión."); return; }
+            
+            const tipo = document.getElementById("tipoDocumento").value;
+            const folio = "FOL-" + Math.floor(Math.random() * 900000 + 100000);
+            const hoy = new Date().toLocaleDateString('es-MX');
+
+            document.getElementById("tituloConstancia").textContent = tipo.toUpperCase();
+            document.getElementById("nombreCiudadano").textContent = usuarioActivo.nombre;
+            document.getElementById("direccionCiudadano").textContent = usuarioActivo.direccion;
+            document.getElementById("folioGenerado").textContent = folio;
+            document.getElementById("fechaGenerada").textContent = hoy;
+            
+            document.getElementById("selloAprobado").style.display = "none";
+            document.getElementById("imagenFirma").style.display = "none";
+            document.getElementById("vistaPreviaConstancia").style.display = "block";
+            
+            const nuevoTramite = {
+                folio: folio,
+                ciudadano: usuarioActivo.nombre,
+                tipo: tipo,
+                fecha: hoy,
+                estado: "Pendiente",
+                firmaAdmin: ""
+            };
+
+            let tramitesGuardados = localStorage.getItem("tramitesCOPACI");
+            tramitesGuardados = tramitesGuardados ? JSON.parse(tramitesGuardados) : [];
+            tramitesGuardados.push(nuevoTramite);
+            localStorage.setItem("tramitesCOPACI", JSON.stringify(tramitesGuardados));
+
+            const mensaje = document.getElementById("mensajeTramite");
+            mensaje.textContent = "✅ Trámite iniciado con éxito. Folio: " + folio + ".";
+            mensaje.style.color = "green";
+        }
+
+        function abrirModalTramites() {
+            const usuarioActivo = JSON.parse(localStorage.getItem("usuarioActivo"));
+            let tramites = localStorage.getItem("tramitesCOPACI");
+            tramites = tramites ? JSON.parse(tramites) : [];
+            const misTramites = tramites.filter(t => t.ciudadano === usuarioActivo.nombre);
+            const contenedor = document.getElementById("listaTramitesCiudadano");
+            contenedor.innerHTML = "";
+
+            if (misTramites.length === 0) {
+                contenedor.innerHTML = "<p>No tienes trámites registrados aún.</p>";
+            } else {
+                misTramites.forEach((tra, index) => {
+                    const indexGlobal = tramites.findIndex(t => t.folio === tra.folio);
+                    let color = tra.estado === 'Pendiente' ? 'orange' : (tra.estado.includes('Aprobado') ? 'green' : 'red');
+                    contenedor.innerHTML += `
+                        <div class="item-tramite" onclick="seleccionarTramite(${indexGlobal}); cerrarModalTramites();">
+                            <h4 style="color: #1a2e4d; margin: 0 0 5px 0;">Folio: ${tra.folio}</h4>
+                            <p style="margin: 0; font-size: 0.9rem;"><strong>Documento:</strong> ${tra.tipo}</p>
+                            <p style="margin: 0; font-size: 0.9rem;"><strong>Fecha:</strong> ${tra.fecha}</p>
+                            <p style="margin: 5px 0 0 0; color: ${color}; font-weight: bold;">Estado: ${tra.estado}</p>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById("modalTramites").style.display = "flex";
+        }
+
+        function cerrarModalTramites() {
+            document.getElementById("modalTramites").style.display = "none";
+        }
+
+        function seleccionarTramite(indexGlobal) {
+            let tramites = JSON.parse(localStorage.getItem("tramitesCOPACI"));
+            const tra = tramites[indexGlobal];
+            const usuarioActivo = JSON.parse(localStorage.getItem("usuarioActivo"));
+
+            document.getElementById("tituloConstancia").textContent = tra.tipo.toUpperCase();
+            document.getElementById("nombreCiudadano").textContent = usuarioActivo.nombre;
+            document.getElementById("direccionCiudadano").textContent = usuarioActivo.direccion;
+            document.getElementById("folioGenerado").textContent = tra.folio;
+            document.getElementById("fechaGenerada").textContent = tra.fecha;
+
+            if (tra.estado.includes("Aprobado")) {
+                document.getElementById("selloAprobado").style.display = "block";
+                document.getElementById("mensajeTramite").textContent = "✅ ¡Tu trámite ha sido APROBADO y FIRMADO!";
+                document.getElementById("mensajeTramite").style.color = "green";
+                if (tra.firmaAdmin && tra.firmaAdmin !== "") {
+                    document.getElementById("imagenFirma").src = tra.firmaAdmin;
+                    document.getElementById("imagenFirma").style.display = "block";
+                } else {
+                    document.getElementById("imagenFirma").style.display = "none";
+                }
+            } else if (tra.estado.includes("Rechazado")) {
+                document.getElementById("selloAprobado").style.display = "none";
+                document.getElementById("imagenFirma").style.display = "none";
+                document.getElementById("mensajeTramite").textContent = "❌ Tu trámite fue RECHAZADO.";
+                document.getElementById("mensajeTramite").style.color = "red";
+            } else {
+                document.getElementById("selloAprobado").style.display = "none";
+                document.getElementById("imagenFirma").style.display = "none";
+                document.getElementById("mensajeTramite").textContent = "⏳ Tu trámite está en revisión (Pendiente).";
+                document.getElementById("mensajeTramite").style.color = "orange";
+            }
+            document.getElementById("vistaPreviaConstancia").style.display = "block";
+        }
+
+        // ===== REPORTES =====
+        document.getElementById("formReporte").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const usuarioActivo = JSON.parse(localStorage.getItem("usuarioActivo"));
+            const tipo = document.getElementById("tipoReporte").value;
+            const ubicacion = document.getElementById("ubicacionReporte").value;
+            const descripcion = document.getElementById("descripcionReporte").value;
+            
+            const nuevoReporte = {
+                id: "REP-" + Math.floor(Math.random() * 9000 + 1000),
+                ciudadano: usuarioActivo.nombre,
+                tipo: tipo,
+                ubicacion: ubicacion,
+                descripcion: descripcion,
+                fecha: new Date().toLocaleDateString('es-MX'),
+                estado: "Pendiente"
+            };
+
+            let reportesGuardados = localStorage.getItem("reportesCOPACI");
+            reportesGuardados = reportesGuardados ? JSON.parse(reportesGuardados) : [];
+            reportesGuardados.push(nuevoReporte);
+            localStorage.setItem("reportesCOPACI", JSON.stringify(reportesGuardados));
+
+            const mensaje = document.getElementById("mensajeReporte");
+            mensaje.textContent = "✅ Reporte enviado con éxito. Folio: " + nuevoReporte.id;
+            mensaje.style.color = "green";
+            document.getElementById("formReporte").reset();
+        });
+
+        // ===== OPINIONES =====
+        document.getElementById("formOpinion").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const usuarioActivo = JSON.parse(localStorage.getItem("usuarioActivo"));
+            const texto = document.getElementById("textoOpinion").value;
+
+            const nuevaOpinion = {
+                fecha: new Date().toLocaleDateString('es-MX'),
+                autor: usuarioActivo.nombre,
+                correoAutor: usuarioActivo.correo,
+                texto: texto,
+                respuesta: "", 
+                respuestaAdmin: "" 
+            };
+
+            let opiniones = localStorage.getItem("opinionesCOPACI");
+            opiniones = opiniones ? JSON.parse(opiniones) : [];
+            opiniones.push(nuevaOpinion);
+            localStorage.setItem("opinionesCOPACI", JSON.stringify(opiniones));
+
+            document.getElementById("mensajeOpinion").textContent = "✅ Opinión enviada con éxito.";
+            document.getElementById("formOpinion").reset();
+            cargarOpinionesCiudadano();
+        });
+
+        function cargarOpinionesCiudadano() {
+            const usuarioActivo = JSON.parse(localStorage.getItem("usuarioActivo"));
+            if (!usuarioActivo) return;
+
+            let opiniones = localStorage.getItem("opinionesCOPACI");
+            opiniones = opiniones ? JSON.parse(opiniones) : [];
+            const contenedor = document.getElementById("listaOpinionesCiudadano");
+            contenedor.innerHTML = "";
+
+            const misOpiniones = opiniones.filter(op => op.correoAutor === usuarioActivo.correo);
+
+            if (misOpiniones.length === 0) {
+                contenedor.innerHTML = "<p>No has enviado ninguna opinión aún.</p>";
+                return;
+            }
+
+            misOpiniones.forEach(op => {
+                let respuestaAdminHTML = op.respuestaAdmin ? `<p style="color: #4a1a4d; margin-top: 5px;"><strong>Respuesta del Admin:</strong> ${op.respuestaAdmin}</p>` : "";
+                let respuestaCopaciHTML = op.respuesta ? `<p style="color: #1a4d1a; margin-top: 5px;"><strong>Respuesta del COPACI:</strong> ${op.respuesta}</p>` : "";
+                let avisoSinRespuesta = (!op.respuesta && !op.respuestaAdmin) ? `<p style="color: gray; font-style: italic; margin-top: 5px;">(Aún sin respuesta)</p>` : "";
+
+                contenedor.innerHTML += `
+                    <div style="border: 2px solid #a7c8e8; padding: 15px; margin-bottom: 15px; border-radius: 8px; background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <h4 style="color: #1a2e4d; margin-top: 0;">Tu opinión (${op.fecha})</h4>
+                        <p style="font-style: italic;">"${op.texto}"</p>
+                        <hr style="border: 0; border-top: 1px dashed #a7c8e8; margin: 10px 0;">
+                        ${respuestaAdminHTML}
+                        ${respuestaCopaciHTML}
+                        ${avisoSinRespuesta}
+                    </div>
+                `;
+            });
+        }
+
+        // ===== EVENTOS =====
+        function verEventosCiudadano() {
+            let eventos = localStorage.getItem("eventosCOPACI");
+            eventos = eventos ? JSON.parse(eventos) : [];
+            const contenedor = document.getElementById("listaEventosCiudadano");
+
+            const aprobados = eventos.filter(e => e.estado.includes('Aprobado'));
+
+            if (aprobados.length === 0) {
+                contenedor.innerHTML = "<p>No hay eventos aprobados por el momento.</p>";
+                return;
+            }
+
+            contenedor.innerHTML = "";
+            aprobados.forEach(ev => {
+                contenedor.innerHTML += `
+                    <div style="border: 2px solid #a7c8e8; padding: 15px; margin-bottom: 10px; border-radius: 8px; background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <h4 style="color: #1a2e4d; margin-top: 0;">🎉 ${ev.nombre}</h4>
+                        <p><strong>Fecha del evento:</strong> ${ev.fecha}</p>
+                        <p><strong>Detalles:</strong> ${ev.descripcion}</p>
+                        <p><strong>Organiza:</strong> ${ev.solicitante}</p>
+                    </div>
+                `;
+            });
+        }
+
+        // ===== AVISOS =====
+        function cargarAvisosCiudadano() {
+            let avisos = localStorage.getItem("avisosCOPACI");
+            avisos = avisos ? JSON.parse(avisos) : [];
+            const contenedor = document.getElementById("listaAvisosCiudadano");
+
+            if (avisos.length === 0) {
+                contenedor.innerHTML = "<p>No hay avisos publicados por el momento.</p>";
+                return;
+            }
+
+            contenedor.innerHTML = "";
+            avisos.forEach(aviso => {
+                let autor = aviso.autor ? aviso.autor : "Admin";
+                let colorEtiqueta = autor === "COPACI" ? "#1a4d1a" : "#4a1a4d"; 
+                
+                contenedor.innerHTML += `
+                    <div style="border: 2px solid #a7c8e8; padding: 15px; margin-bottom: 15px; border-radius: 8px; background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <span style="background: ${colorEtiqueta}; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">Publicado por: ${autor}</span>
+                        <h4 style="color: #1a2e4d; margin-top: 10px;">📢 ${aviso.titulo}</h4>
+                        <p style="font-size: 0.9rem; color: #666;"><strong>Fecha:</strong> ${aviso.fecha}</p>
+                        <p style="font-style: italic; background: #f9f9f9; padding: 10px; border-left: 3px solid #a7c8e8;">"${aviso.contenido}"</p>
+                    </div>
+                `;
+            });
+        }
+    </script>
 </body>
 </html>

@@ -5,13 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Administrador - COPACI</title>
     <link rel="stylesheet" href="admin.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); justify-content: center; align-items: center; }
+        .modal-content { background-color: #fff; padding: 30px; border-radius: 10px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        #lienzoFirma { border: 2px dashed #4a1a4d; border-radius: 8px; cursor: crosshair; background-color: #f9f9f9; margin: 15px 0; }
+        
+        .campana-container { position: absolute; top: 25px; right: 25px; cursor: pointer; }
+        .campana-icono { font-size: 2rem; color: #e8a7c5; text-decoration: none; }
+        .campana-badge { position: absolute; top: -5px; right: -5px; background: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.8rem; font-weight: bold; display: none; }
+
+        .fila-usuario { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ccc; padding: 10px 5px; }
+        .fila-usuario:last-child { border-bottom: none; }
+        .menu-puntos { position: relative; display: inline-block; }
+        .btn-puntos { background: transparent; border: none; font-size: 1.5rem; cursor: pointer; color: #4a1a4d; font-weight: bold; padding: 0 10px; }
+        .menu-opciones { display: none; position: absolute; right: 0; background-color: #f9f9f9; min-width: 120px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1; border: 1px solid #e8a7c5; border-radius: 4px; }
+        .menu-opciones button { color: red; padding: 10px; text-decoration: none; display: block; width: 100%; text-align: left; background: none; border: none; cursor: pointer; font-weight: bold; }
+        .menu-opciones button:hover { background-color: #ffe6e6; }
+        .menu-puntos:hover .menu-opciones { display: block; }
+        .grafica-container { max-width: 500px; margin: 20px auto; background: white; padding: 15px; border-radius: 10px; border: 2px solid #e8a7c5; }
+    </style>
 </head>
 <body>
 
-     ENCABEZADO 
-    <header>
+    <header style="position: relative;">
         <h1>COPACI</h1>
         <p>Panel de Administrador</p>
+        
+        <div class="campana-container" onclick="verNotificaciones()">
+            <span class="campana-icono">🔔</span>
+            <span id="badgeNotificaciones" class="campana-badge">!</span>
+        </div>
 
         <nav>
             <ul>
@@ -22,119 +46,733 @@
                 <li><a href="#informes">Informes</a></li>
                 <li><a href="#documentos">Documentos</a></li>
                 <li><a href="#reportes">Reportes</a></li>
+                <li><a href="#visualizaciones">Visualizaciones</a></li>
                 <li><a href="#membresia">Membresía</a></li>
             </ul>
         </nav>
-<a href="index.html"> <button> CERRAR SESIÓN </button> </a>
-        
+        <a href="index.html"> <button> CERRAR SESIÓN </button> </a>
     </header>
-    
 
-    <!-- ===== CONTENIDO PRINCIPAL ===== -->
     <main>
-
         <h2>Bienvenido, Administrador</h2>
         <p>Desde aquí puedes gestionar todo el sistema del COPACI.</p>
 
-        <!-- ===== GESTIÓN DE USUARIOS ===== -->
         <section id="usuarios">
             <h3>Gestión de Usuarios</h3>
-            <p>Registrar, actualizar o eliminar usuarios del sistema.</p>
-
-            <button>Registrar usuario</button>
-            <button>Actualizar usuario</button>
-            <button>Eliminar usuario</button>
-            <button>Ver lista de usuarios</button>
+            <p>Administra el acceso de los ciudadanos y miembros del COPACI.</p>
+            <div style="margin-bottom: 20px;">
+                <button onclick="cargarUsuarios('ciudadano')" style="background: #4a1a4d; color: #e8a7c5;">Listado de Ciudadanos</button>
+                <button onclick="cargarUsuarios('copaci')" style="background: #4a1a4d; color: #e8a7c5;">Listado de COPACIs</button>
+            </div>
+            <div id="listaUsuariosAdmin" style="margin-top: 20px; text-align: left; background: #fff; padding: 15px; border-radius: 8px; border: 2px solid #e8a7c5;">
+                <p style="color: #666; font-style: italic;">Selecciona una opción para ver la lista.</p>
+            </div>
         </section>
 
-        <!-- ===== OPINIONES / COMENTARIOS ===== -->
         <section id="opiniones">
             <h3>Opiniones y Comentarios</h3>
-            <p>Revisa y responde las opiniones enviadas por COPACIs y ciudadanos.</p>
-
-            <button>Ver opiniones recibidas</button>
-            <button>Responder comentario</button>
-            <button>Eliminar comentario</button>
+            <p>Revisa y responde las opiniones enviadas por los ciudadanos.</p>
+            <button onclick="cargarOpinionesAdmin()">Ver opiniones recibidas</button>
+            <div id="listaOpinionesAdmin" style="margin-top: 20px; text-align: left;"></div>
         </section>
 
-        <!-- ===== SOLICITUD DE EVENTOS ===== -->
         <section id="eventos">
             <h3>Solicitud de Eventos</h3>
             <p>Gestiona las solicitudes de eventos enviadas por los COPACIs.</p>
-
-            <button>Ver solicitudes</button>
-            <button>Aprobar evento</button>
-            <button>Rechazar evento</button>
-            <button>Crear evento</button>
+            <button onclick="cargarEventosAdmin()">Ver solicitudes</button>
+            <div id="listaEventosAdmin" style="margin-top: 20px; text-align: left;"></div>
         </section>
 
-        <!-- ===== AVISOS A LA COMUNIDAD ===== -->
         <section id="avisos">
             <h3>Avisos a la Comunidad</h3>
             <p>Publica y administra los avisos dirigidos a los ciudadanos.</p>
-
-            <button>Publicar aviso</button>
-            <button>Editar aviso</button>
-            <button>Eliminar aviso</button>
+            <div style="background: #fafafa; padding: 15px; border-radius: 8px; border: 1px solid #e8a7c5; margin-bottom: 20px; text-align: left;">
+                <input type="text" id="tituloAviso" placeholder="Título del aviso (Ej. Suspensión de agua)" style="padding: 8px; width: 100%; margin-bottom: 10px; border: 1px solid #4a1a4d; border-radius: 4px;">
+                <textarea id="contenidoAviso" placeholder="Escribe el mensaje del aviso aquí..." style="padding: 8px; width: 100%; height: 60px; margin-bottom: 10px; border: 1px solid #4a1a4d; border-radius: 4px;"></textarea>
+                <button onclick="publicarAviso()" style="background: #4a1a4d; color: #e8a7c5;">Publicar aviso</button>
+            </div>
+            <button onclick="cargarAvisosAdmin()">Ver todos los avisos</button>
+            <div id="listaAvisosAdmin" style="margin-top: 20px; text-align: left;"></div>
         </section>
 
-        <!-- ===== INFORMES ===== -->
         <section id="informes">
-            <h3>Informes</h3>
-            <p>Informes trimestrales de acciones e informes de eventos.</p>
-
-            <button>Subir informe trimestral</button>
-            <button>Subir informe de evento</button>
-            <button>Ver informes</button>
+            <h3>Revisión de Informes</h3>
+            <p>Revisa los informes redactados y firmados por el COPACI. Aprueba o rechaza con comentarios.</p>
+            <button onclick="cargarInformesAdmin()">Ver informes recibidos</button>
+            <div id="listaInformesAdmin" style="margin-top: 20px; text-align: left;"></div>
         </section>
 
-        <!-- ===== TRÁMITE DE DOCUMENTOS ===== -->
         <section id="documentos">
             <h3>Trámite de Documentos</h3>
             <p>Administra los trámites de documentos solicitados.</p>
-
-            <button>Ver trámites pendientes</button>
-            <button>Aprobar trámite</button>
-            <button>Rechazar trámite</button>
+            <div style="margin-bottom: 20px;">
+                <button onclick="cargarTramitesAdmin('Pendiente')" style="background: #4a1a4d; color: #e8a7c5;">Ver Trámites en Espera</button>
+                <button onclick="cargarTramitesAdmin('Aprobado')" style="background: #4a1a4d; color: #e8a7c5;">Ver Trámites Aprobados</button>
+            </div>
+            <div id="divBuscadorAdmin" style="display: none; margin-bottom: 15px;">
+                <input type="text" id="inputBuscarAdmin" onkeyup="filtrarTramitesAdmin()" placeholder="Buscar por nombre del ciudadano..." style="padding: 8px; width: 100%; max-width: 300px; border: 1px solid #4a1a4d; border-radius: 4px;">
+            </div>
+            <div id="listaTramitesAdmin" style="margin-top: 20px; text-align: left;"></div>
         </section>
 
-        <!-- ===== REPORTES ===== -->
         <section id="reportes">
             <h3>Reportes</h3>
             <p>Consulta los reportes enviados por los usuarios.</p>
-
-            <button>Ver reportes</button>
-            <button>Atender reporte</button>
-            <button>Marcar como resuelto</button>
+            <button onclick="cargarReportesAdmin()">Ver reportes</button>
+            <div id="listaReportes" style="margin-top: 20px; text-align: left;"></div>
         </section>
 
-        <!-- ===== VISUALIZACIONES ===== -->
         <section id="visualizaciones">
-            <h3>Visualizaciones</h3>
-            <p>Estadísticas de uso y consultas de la plataforma.</p>
-
-            <button>Ver estadísticas</button>
-            <button>Generar reporte visual</button>
+            <h3>Visualizaciones y Estadísticas</h3>
+            <p>Consulta el resumen de actividad en la plataforma.</p>
+            <div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap;">
+                <div style="background: #fff; border: 2px solid #e8a7c5; padding: 15px; border-radius: 8px; width: 150px; text-align: center;">
+                    <h4 style="color: #4a1a4d; margin: 0;">Trámites</h4>
+                    <p id="statTramites" style="font-size: 2rem; font-weight: bold; color: #e8a7c5; margin: 5px 0;">0</p>
+                </div>
+                <div style="background: #fff; border: 2px solid #e8a7c5; padding: 15px; border-radius: 8px; width: 150px; text-align: center;">
+                    <h4 style="color: #4a1a4d; margin: 0;">Reportes</h4>
+                    <p id="statReportes" style="font-size: 2rem; font-weight: bold; color: #e8a7c5; margin: 5px 0;">0</p>
+                </div>
+                <div style="background: #fff; border: 2px solid #e8a7c5; padding: 15px; border-radius: 8px; width: 150px; text-align: center;">
+                    <h4 style="color: #4a1a4d; margin: 0;">Usuarios</h4>
+                    <p id="statUsuarios" style="font-size: 2rem; font-weight: bold; color: #e8a7c5; margin: 5px 0;">0</p>
+                </div>
+            </div>
+            <button onclick="generarGrafica()">Generar reporte visual (Gráfica)</button>
+            <div id="contenedorGrafica" class="grafica-container" style="display: none;">
+                <canvas id="miGrafica"></canvas>
+            </div>
         </section>
 
-        <!-- ===== MEMBRESÍA ===== -->
+        <!-- ===== MEMBRESÍA Y CUPONES (ADMIN) ===== -->
         <section id="membresia">
-            <h3>Membresía</h3>
-            <p>Administración de las membresías de los COPACIs.</p>
+            <h3>Administración de Membresías y Cupones</h3>
+            <p>Registra pagos de membresías y publica cupones para tiendas locales.</p>
+            
+            <div style="margin-bottom: 20px;">
+                <button onclick="cargarMembresiasAdmin()" style="background: #4a1a4d; color: #e8a7c5;">Ver Solicitudes y Miembros</button>
+                <button onclick="mostrarFormCupon()" style="background: #4a1a4d; color: #e8a7c5;">Publicar Nuevo Cupón</button>
+            </div>
 
-            <button>Ver membresías</button>
-            <button>Registrar membresía</button>
-            <button>Actualizar membresía</button>
-            <button>Cancelar membresía</button>
+            <div id="formCuponAdmin" style="display: none; background: #fafafa; padding: 15px; border-radius: 8px; border: 1px solid #e8a7c5; margin-bottom: 20px; text-align: left;">
+                <h4 style="color: #4a1a4d; margin-bottom: 10px;">Crear Cupón de Descuento</h4>
+                <input type="text" id="tituloCupon" placeholder="Ej. 10% de descuento en Tortillería" style="padding: 8px; width: 100%; margin-bottom: 10px; border: 1px solid #4a1a4d; border-radius: 4px;">
+                <input type="text" id="tiendaCupon" placeholder="Nombre de la tienda (Ej. Tortillería La Esperanza)" style="padding: 8px; width: 100%; margin-bottom: 10px; border: 1px solid #4a1a4d; border-radius: 4px;">
+                <button onclick="publicarCupon()" style="background: #4a1a4d; color: #e8a7c5;">Publicar Cupón</button>
+            </div>
+
+            <div id="listaMembresiasAdmin" style="margin-top: 20px; text-align: left;"></div>
+            <div id="listaCuponesAdmin" style="margin-top: 20px; text-align: left;"></div>
         </section>
-
     </main>
 
-    <!-- ===== PIE DE PÁGINA ===== -->
     <footer>
         <p>COPACI - Panel de Administrador</p>
         <p>&copy; 2025</p>
     </footer>
 
+    <!-- VENTANA MODAL PARA LA FIRMA (TRÁMITES Y EVENTOS) -->
+    <div id="modalFirma" class="modal">
+        <div class="modal-content">
+            <h3 style="color: #4a1a4d; margin-bottom: 10px;">Firmar Constancia</h3>
+            <p style="color: #666; margin-bottom: 10px; font-size: 0.9rem;">Dibuja tu firma con el mouse para oficializar el documento.</p>
+            <canvas id="lienzoFirma" width="400" height="200"></canvas>
+            <div>
+                <button onclick="limpiarLienzo()" style="background: #ccc; color: #333; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-right: 10px;">Limpiar</button>
+                <button onclick="guardarFirma()" style="background: #4a1a4d; color: #e8a7c5; border: 2px solid #e8a7c5; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Guardar Firma</button>
+                <button onclick="cerrarModal()" style="background: transparent; color: #4a1a4d; border: 1px solid #4a1a4d; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-left: 10px;">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- LÓGICA DE MEMBRESÍAS Y CUPONES (ADMIN) ---
+        function cargarMembresiasAdmin() {
+            let membresias = localStorage.getItem("membresiasCOPACI");
+            membresias = membresias ? JSON.parse(membresias) : [];
+            const contenedor = document.getElementById("listaMembresiasAdmin");
+            document.getElementById("listaCuponesAdmin").innerHTML = ""; 
+
+            if (membresias.length === 0) {
+                contenedor.innerHTML = "<p>No hay solicitudes de membresía.</p>";
+                return;
+            }
+
+            contenedor.innerHTML = "<h4 style='color: #4a1a4d;'>Solicitudes y Miembros:</h4>";
+            membresias.forEach((mem, index) => {
+                let color = mem.estado === 'Pendiente de Pago' ? 'orange' : 'green';
+                let botones = "";
+
+                if (mem.estado === "Pendiente de Pago") {
+                    botones = `<button onclick="activarMembresia(${index})" style="background: #4a1a4d; color: #e8a7c5; border: 2px solid #e8a7c5; padding: 8px; border-radius: 5px; cursor: pointer; margin-top: 10px;">Registrar Pago y Activar</button>`;
+                } else {
+                    botones = `<button onclick="cancelarMembresia(${index})" style="background: transparent; color: red; border: 1px solid red; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-top: 10px;">Cancelar Membresía</button>`;
+                }
+
+                contenedor.innerHTML += `
+                    <div style="border: 2px solid #e8a7c5; padding: 15px; margin-bottom: 15px; border-radius: 8px; background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <h4 style="color: #4a1a4d; margin-top: 0;">${mem.ciudadano} (${mem.correo})</h4>
+                        <p><strong>Folio de Pago:</strong> ${mem.folioPago}</p>
+                        <p><strong>Fecha de Solicitud:</strong> ${mem.fechaSolicitud}</p>
+                        <p><strong>Estado:</strong> <span style="color: ${color}; font-weight: bold;">${mem.estado}</span></p>
+                        ${botones}
+                    </div>
+                `;
+            });
+            cargarCuponesAdmin();
+        }
+
+        function activarMembresia(index) {
+            let membresias = JSON.parse(localStorage.getItem("membresiasCOPACI"));
+            membresias[index].estado = "Activa - Miembro Premium ✅";
+            membresias[index].fechaActivacion = new Date().toLocaleDateString('es-MX');
+            localStorage.setItem("membresiasCOPACI", JSON.stringify(membresias));
+            alert("✅ Pago registrado. El ciudadano ahora es Miembro Premium.");
+            cargarMembresiasAdmin();
+        }
+
+        function cancelarMembresia(index) {
+            if (confirm("¿Seguro que deseas cancelar esta membresía?")) {
+                let membresias = JSON.parse(localStorage.getItem("membresiasCOPACI"));
+                membresias[index].estado = "Cancelada ❌";
+                localStorage.setItem("membresiasCOPACI", JSON.stringify(membresias));
+                cargarMembresiasAdmin();
+            }
+        }
+
+        function mostrarFormCupon() {
+            const form = document.getElementById("formCuponAdmin");
+            form.style.display = form.style.display === "none" ? "block" : "none";
+        }
+
+        function publicarCupon() {
+            const titulo = document.getElementById("tituloCupon").value;
+            const tienda = document.getElementById("tiendaCupon").value;
+
+            if (titulo === "" || tienda === "") {
+                alert("Llena los datos del cupón.");
+                return;
+            }
+
+            const nuevoCupon = {
+                id: "CUP-" + Math.floor(Math.random() * 9000 + 1000),
+                titulo: titulo,
+                tienda: tienda
+            };
+
+            let cupones = localStorage.getItem("cuponesCOPACI");
+            cupones = cupones ? JSON.parse(cupones) : [];
+            cupones.push(nuevoCupon);
+            localStorage.setItem("cuponesCOPACI", JSON.stringify(cupones));
+
+            alert("✅ Cupón publicado para los miembros.");
+            document.getElementById("tituloCupon").value = "";
+            document.getElementById("tiendaCupon").value = "";
+            mostrarFormCupon();
+            cargarCuponesAdmin();
+        }
+
+        function cargarCuponesAdmin() {
+            let cupones = localStorage.getItem("cuponesCOPACI");
+            cupones = cupones ? JSON.parse(cupones) : [];
+            const contenedor = document.getElementById("listaCuponesAdmin");
+
+            if (cupones.length === 0) return;
+
+            contenedor.innerHTML = "<h4 style='color: #4a1a4d;'>Cupones Activos:</h4>";
+            cupones.forEach((cup, index) => {
+                contenedor.innerHTML += `
+                    <div style="border: 2px dashed #e8a7c5; padding: 10px; margin-bottom: 10px; border-radius: 8px; background: #fdf0f6; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong style="color: #4a1a4d;">${cup.titulo}</strong><br>
+                            <span style="font-size: 0.85rem;">Tienda: ${cup.tienda}</span>
+                        </div>
+                        <button onclick="eliminarCupon(${index})" style="background: transparent; color: red; border: none; font-size: 1.2rem; cursor: pointer;">✖</button>
+                    </div>
+                `;
+            });
+        }
+
+        function eliminarCupon(index) {
+            if (confirm("¿Eliminar este cupón?")) {
+                let cupones = JSON.parse(localStorage.getItem("cuponesCOPACI"));
+                cupones.splice(index, 1);
+                localStorage.setItem("cuponesCOPACI", JSON.stringify(cupones));
+                cargarCuponesAdmin();
+            }
+        }
+
+        // --- VISUALIZACIONES Y GRÁFICAS ---
+        let miGraficaChart = null;
+        function cargarEstadisticas() {
+            let tramites = JSON.parse(localStorage.getItem("tramitesCOPACI")) || [];
+            let reportes = JSON.parse(localStorage.getItem("reportesCOPACI")) || [];
+            let usuarios = JSON.parse(localStorage.getItem("usuariosCOPACI")) || [];
+
+            document.getElementById("statTramites").textContent = tramites.length;
+            document.getElementById("statReportes").textContent = reportes.length;
+            document.getElementById("statUsuarios").textContent = usuarios.length;
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            cargarEstadisticas();
+            const recordatorio = localStorage.getItem("recordatorioAdmin");
+            if (recordatorio === "true") {
+                document.getElementById("badgeNotificaciones").style.display = "block";
+            }
+        });
+
+        function generarGrafica() {
+            document.getElementById("contenedorGrafica").style.display = "block";
+            cargarEstadisticas();
+
+            let tramites = JSON.parse(localStorage.getItem("tramitesCOPACI")) || [];
+            let reportes = JSON.parse(localStorage.getItem("reportesCOPACI")) || [];
+
+            let tramitesPendientes = tramites.filter(t => t.estado === 'Pendiente').length;
+            let tramitesAprobados = tramites.filter(t => t.estado.includes('Aprobado')).length;
+            let reportesPendientes = reportes.filter(r => r.estado === 'Pendiente').length;
+            let reportesResueltos = reportes.filter(r => r.estado.includes('Resuelto')).length;
+
+            const ctx = document.getElementById('miGrafica').getContext('2d');
+            if (miGraficaChart) { miGraficaChart.destroy(); }
+
+            miGraficaChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Trámites Pendientes', 'Trámites Aprobados', 'Reportes Pendientes', 'Reportes Resueltos'],
+                    datasets: [{
+                        label: 'Cantidad',
+                        data: [tramitesPendientes, tramitesAprobados, reportesPendientes, reportesResueltos],
+                        backgroundColor: ['#d9534f', '#5cb85c', '#f0ad4e', '#337ab7'],
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false }, title: { display: true, text: 'Resumen de Actividad', font: { family: 'Times New Roman', size: 16 } } },
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'Times New Roman' } } }, x: { ticks: { font: { family: 'Times New Roman' } } } }
+                }
+            });
+        }
+
+        // --- GESTIÓN DE USUARIOS ---
+        function cargarUsuarios(rol) {
+            let usuarios = localStorage.getItem("usuariosCOPACI");
+            usuarios = usuarios ? JSON.parse(usuarios) : [];
+            const contenedor = document.getElementById("listaUsuariosAdmin");
+
+            const filtrados = usuarios.filter(u => u.rol === rol);
+
+            if (filtrados.length === 0) {
+                contenedor.innerHTML = `<p>No hay ${rol}s registrados.</p>`;
+                return;
+            }
+
+            contenedor.innerHTML = "";
+            filtrados.forEach((user, index) => {
+                const indexGlobal = usuarios.findIndex(u => u.correo === user.correo);
+
+                contenedor.innerHTML += `
+                    <div class="fila-usuario">
+                        <div>
+                            <strong>${user.nombre}</strong><br>
+                            <span style="font-size: 0.85rem; color: #666;">${user.correo} | ${user.direccion}</span>
+                        </div>
+                        <div class="menu-puntos">
+                            <button class="btn-puntos">⋮</button>
+                            <div class="menu-opciones">
+                                <button onclick="eliminarUsuario(${indexGlobal}, '${rol}')">Eliminar acceso</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function eliminarUsuario(indexGlobal, rol) {
+            if (confirm("⚠️ ¿Estás seguro de que deseas eliminar el acceso de este usuario?")) {
+                let usuarios = JSON.parse(localStorage.getItem("usuariosCOPACI"));
+                usuarios.splice(indexGlobal, 1);
+                localStorage.setItem("usuariosCOPACI", JSON.stringify(usuarios));
+                alert("✅ Acceso revocado y usuario eliminado.");
+                cargarUsuarios(rol);
+            }
+        }
+
+        // --- CAMPANITA DE NOTIFICACIONES ---
+        function verNotificaciones() {
+            localStorage.removeItem("recordatorioAdmin");
+            document.getElementById("badgeNotificaciones").style.display = "none";
+            alert("🔔 ¡El COPACI te ha recordado que tienes trámites pendientes de firmar y aprobar!");
+            cargarTramitesAdmin('Pendiente');
+            document.getElementById('documentos').scrollIntoView();
+        }
+
+        // --- LÓGICA DE LA FIRMA ---
+        let tipoAFirmar = ""; 
+        let indexAFirmar = -1;
+
+        const canvas = document.getElementById("lienzoFirma");
+        const ctx = canvas.getContext("2d");
+        let dibujando = false;
+        ctx.lineWidth = 3; ctx.lineCap = "round"; ctx.strokeStyle = "#000";
+
+        canvas.addEventListener("mousedown", (e) => { dibujando = true; ctx.beginPath(); ctx.moveTo(e.offsetX, e.offsetY); });
+        canvas.addEventListener("mousemove", (e) => { if (dibujando) { ctx.lineTo(e.offsetX, e.offsetY); ctx.stroke(); } });
+        canvas.addEventListener("mouseup", () => { dibujando = false; });
+        canvas.addEventListener("mouseout", () => { dibujando = false; });
+
+        function limpiarLienzo() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+        function cerrarModal() { document.getElementById("modalFirma").style.display = "none"; limpiarLienzo(); }
+        
+        function abrirModalFirma(tipo, index) { 
+            tipoAFirmar = tipo;
+            indexAFirmar = index; 
+            document.getElementById("modalFirma").style.display = "flex"; 
+        }
+
+        function guardarFirma() {
+            const firmaBase64 = canvas.toDataURL("image/png");
+            
+            if (tipoAFirmar === "tramite") {
+                let tramites = JSON.parse(localStorage.getItem("tramitesCOPACI"));
+                tramites[indexAFirmar].firmaAdmin = firmaBase64;
+                tramites[indexAFirmar].estado = "Aprobado ✅";
+                localStorage.setItem("tramitesCOPACI", JSON.stringify(tramites));
+                cargarTramitesAdmin('Pendiente');
+            } else if (tipoAFirmar === "evento") {
+                let eventos = JSON.parse(localStorage.getItem("eventosCOPACI"));
+                eventos[indexAFirmar].firmaAdmin = firmaBase64;
+                eventos[indexAFirmar].estado = "Aprobado ✅";
+                localStorage.setItem("eventosCOPACI", JSON.stringify(eventos));
+                cargarEventosAdmin();
+            }
+
+            cerrarModal();
+        }
+
+        // --- LÓGICA DE TRÁMITES ---
+        let filtroEstadoTramite = "Pendiente";
+
+        function cargarTramitesAdmin(estado) {
+            filtroEstadoTramite = estado;
+            const contenedor = document.getElementById("listaTramitesAdmin");
+            const divBuscador = document.getElementById("divBuscadorAdmin");
+
+            if (estado === 'Aprobado') {
+                divBuscador.style.display = "block";
+                document.getElementById("inputBuscarAdmin").value = "";
+            } else {
+                divBuscador.style.display = "none";
+            }
+
+            let tramites = localStorage.getItem("tramitesCOPACI");
+            tramites = tramites ? JSON.parse(tramites) : [];
+
+            let tramitesFiltrados = tramites.filter(t => t.estado.includes(estado));
+
+            if (tramitesFiltrados.length === 0) {
+                contenedor.innerHTML = `<p>No hay trámites ${estado.toLowerCase()}s.</p>`;
+                return;
+            }
+
+            contenedor.innerHTML = ""; 
+            tramitesFiltrados.forEach((tra) => {
+                const indexGlobal = tramites.findIndex(t => t.folio === tra.folio);
+                let firmaHTML = tra.firmaAdmin ? `<p style="color: green; margin-top: 10px;"><strong>Firmado ✅</strong></p>` : "";
+
+                contenedor.innerHTML += `
+                    <div class="tramite-card" data-nombre="${tra.ciudadano.toLowerCase()}" style="border: 2px solid #e8a7c5; padding: 15px; margin-bottom: 15px; border-radius: 8px; background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <h4 style="color: #4a1a4d; margin-top: 0;">Folio: ${tra.folio}</h4>
+                        <p><strong>Solicita:</strong> ${tra.ciudadano}</p>
+                        <p><strong>Documento:</strong> ${tra.tipo}</p>
+                        <p><strong>Fecha:</strong> ${tra.fecha}</p>
+                        <p><strong>Estado:</strong> <span style="color: ${tra.estado === 'Pendiente' ? 'red' : 'green'}; font-weight: bold;">${tra.estado}</span></p>
+                        
+                        ${tra.estado === 'Pendiente' ? `
+                            <button onclick="abrirModalFirma('tramite', ${indexGlobal})" style="background: #4a1a4d; color: #e8a7c5; border: 2px solid #e8a7c5; padding: 8px; border-radius: 5px; cursor: pointer; margin-right: 10px;">Firmar y Aprobar</button>
+                            <button onclick="cambiarEstadoTramite(${indexGlobal}, 'Rechazado ❌')" style="background: transparent; color: #4a1a4d; border: 2px solid #4a1a4d; padding: 8px; border-radius: 5px; cursor: pointer;">Rechazar</button>
+                        ` : firmaHTML}
+                    </div>`;
+            });
+        }
+
+        function filtrarTramitesAdmin() {
+            const texto = document.getElementById("inputBuscarAdmin").value.toLowerCase();
+            const tarjetas = document.querySelectorAll(".tramite-card");
+            
+            tarjetas.forEach(tarjeta => {
+                const nombre = tarjeta.getAttribute("data-nombre");
+                if (nombre.includes(texto)) { tarjeta.style.display = "block"; } else { tarjeta.style.display = "none"; }
+            });
+        }
+
+        function cambiarEstadoTramite(index, nuevoEstado) {
+            let tramites = JSON.parse(localStorage.getItem("tramitesCOPACI"));
+            tramites[index].estado = nuevoEstado;
+            localStorage.setItem("tramitesCOPACI", JSON.stringify(tramites));
+            cargarTramitesAdmin(filtroEstadoTramite);
+        }
+
+        // --- LÓGICA DE EVENTOS ---
+        function cargarEventosAdmin() {
+            let eventos = localStorage.getItem("eventosCOPACI");
+            eventos = eventos ? JSON.parse(eventos) : [];
+            const contenedor = document.getElementById("listaEventosAdmin");
+
+            if (eventos.length === 0) { contenedor.innerHTML = "<p>No hay solicitudes de eventos.</p>"; return; }
+
+            contenedor.innerHTML = ""; 
+            eventos.forEach((ev, index) => {
+                let constanciaHTML = "";
+                if (ev.estado === "Aprobado ✅" || ev.estado === "Desaprobado ❌") {
+                    let colorSello = ev.estado.includes("Aprobado") ? "green" : "red";
+                    let firmaHTML = ev.firmaAdmin ? `<img src="${ev.firmaAdmin}" style="max-height: 60px; display: block; margin: 0 auto 5px auto;">` : "";
+                    
+                    constanciaHTML = `
+                        <div style="margin-top: 15px; border: 2px solid #ccc; padding: 20px; background: #fafafa; border-radius: 8px; position: relative; text-align: center;">
+                            <h4 style="color: #333; text-transform: uppercase; margin-bottom: 10px;">Constancia de Evento</h4>
+                            <p style="font-size: 0.9rem; color: #555;">Se hace constar que el evento <strong>"${ev.nombre}"</strong> ha sido revisado por la mesa directiva.</p>
+                            <div style="position: absolute; top: 10px; right: 10px; border: 3px solid ${colorSello}; color: ${colorSello}; font-size: 1.2rem; font-weight: bold; padding: 5px 10px; transform: rotate(-15deg); opacity: 0.7; border-radius: 5px; text-transform: uppercase;">
+                                ${ev.estado.includes("Aprobado") ? "Aprobado" : "Desaprobado"}
+                            </div>
+                            <div style="margin-top: 20px;">
+                                ${firmaHTML}
+                                <p style="font-size: 0.8rem; color: #777;">Firma del Administrador</p>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                contenedor.innerHTML += `
+                    <div style="border: 2px solid #e8a7c5; padding: 15px; margin-bottom: 15px; border-radius: 8px; background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <h4 style="color: #4a1a4d; margin-top: 0;">Evento: ${ev.nombre}</h4>
+                        <p><strong>Solicita:</strong> ${ev.solicitante}</p>
+                        <p><strong>Fecha:</strong> ${ev.fecha}</p>
+                        <p><strong>Descripción:</strong> ${ev.descripcion}</p>
+                        <p><strong>Estado:</strong> <span style="color: ${ev.estado === 'Pendiente' ? 'red' : (ev.estado.includes('Aprobado') ? 'green' : 'red')}; font-weight: bold;">${ev.estado}</span></p>
+                        
+                        ${ev.estado === 'Pendiente' ? `
+                            <button onclick="abrirModalFirma('evento', ${index})" style="background: #4a1a4d; color: #e8a7c5; border: 2px solid #e8a7c5; padding: 8px; border-radius: 5px; cursor: pointer; margin-right: 10px;">Firmar Constancia y Aprobar</button>
+                            <button onclick="cambiarEstadoEvento(${index}, 'Desaprobado ❌')" style="background: transparent; color: #4a1a4d; border: 2px solid #4a1a4d; padding: 8px; border-radius: 5px; cursor: pointer;">Desaprobar</button>
+                        ` : constanciaHTML}
+                    </div>`;
+            });
+        }
+
+        function cambiarEstadoEvento(index, nuevoEstado) {
+            let eventos = JSON.parse(localStorage.getItem("eventosCOPACI"));
+            eventos[index].estado = nuevoEstado;
+            localStorage.setItem("eventosCOPACI", JSON.stringify(eventos));
+            cargarEventosAdmin();
+        }
+
+        // --- LÓGICA DE OPINIONES ---
+        function cargarOpinionesAdmin() {
+            let opiniones = localStorage.getItem("opinionesCOPACI");
+            opiniones = opiniones ? JSON.parse(opiniones) : [];
+            const contenedor = document.getElementById("listaOpinionesAdmin");
+
+            if (opiniones.length === 0) { contenedor.innerHTML = "<p>No hay opiniones recibidas.</p>"; return; }
+
+            contenedor.innerHTML = ""; 
+            opiniones.forEach((op, index) => {
+                let respuestaCopaciHTML = op.respuesta ? `<p style="color: #1a4d1a; margin-top: 5px; font-size: 0.9rem;"><strong>El COPACI respondió:</strong> ${op.respuesta}</p>` : "";
+                let respuestaAdminHTML = op.respuestaAdmin 
+                    ? `<p style="color: #4a1a4d; margin-top: 5px;"><strong>Tu respuesta (Admin):</strong> ${op.respuestaAdmin}</p>
+                       <button onclick="editarRespuestaAdmin(${index})" style="background: transparent; color: #4a1a4d; border: 1px solid #4a1a4d; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; margin-top: 5px;">Editar mi respuesta</button>` 
+                    : `<div style="margin-top: 10px;">
+                        <input type="text" id="respuesta-admin-${index}" placeholder="Escribe tu respuesta..." style="padding: 8px; width: 70%; border: 1px solid #4a1a4d; border-radius: 4px;">
+                        <button onclick="responderOpinionAdmin(${index})" style="background: #4a1a4d; color: #e8a7c5; border: 2px solid #e8a7c5; padding: 8px; border-radius: 5px; cursor: pointer;">Responder</button>
+                       </div>`;
+                contenedor.innerHTML += `
+                    <div style="border: 2px solid #e8a7c5; padding: 15px; margin-bottom: 15px; border-radius: 8px; background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <h4 style="color: #4a1a4d; margin-top: 0;">Opinión de: ${op.autor} (${op.fecha})</h4>
+                        <p style="font-style: italic;">"${op.texto}"</p>
+                        ${respuestaCopaciHTML}
+                        <hr style="border: 0; border-top: 1px dashed #e8a7c5; margin: 10px 0;">
+                        ${respuestaAdminHTML}
+                    </div>`;
+            });
+        }
+
+        function responderOpinionAdmin(index) {
+            const textoRespuesta = document.getElementById(`respuesta-admin-${index}`).value;
+            if (textoRespuesta.trim() === "") { alert("Escribe una respuesta antes de enviar."); return; }
+            let opiniones = JSON.parse(localStorage.getItem("opinionesCOPACI"));
+            opiniones[index].respuestaAdmin = textoRespuesta;
+            localStorage.setItem("opinionesCOPACI", JSON.stringify(opiniones));
+            cargarOpinionesAdmin();
+        }
+
+        function editarRespuestaAdmin(index) {
+            let opiniones = JSON.parse(localStorage.getItem("opinionesCOPACI"));
+            let nuevaRespuesta = prompt("Edita tu respuesta:", opiniones[index].respuestaAdmin);
+            if (nuevaRespuesta !== null && nuevaRespuesta.trim() !== "") {
+                opiniones[index].respuestaAdmin = nuevaRespuesta;
+                localStorage.setItem("opinionesCOPACI", JSON.stringify(opiniones));
+                cargarOpinionesAdmin();
+            }
+        }
+
+        // --- LÓGICA DE REPORTES ---
+        function cargarReportesAdmin() {
+            let reportes = localStorage.getItem("reportesCOPACI");
+            reportes = reportes ? JSON.parse(reportes) : [];
+            const contenedor = document.getElementById("listaReportes");
+
+            if (reportes.length === 0) { contenedor.innerHTML = "<p>No hay reportes pendientes por el momento.</p>"; return; }
+
+            contenedor.innerHTML = ""; 
+            reportes.forEach((rep, index) => {
+                contenedor.innerHTML += `
+                    <div style="border: 2px solid #e8a7c5; padding: 15px; margin-bottom: 15px; border-radius: 8px; background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <h4 style="color: #4a1a4d; margin-top: 0;">Folio: ${rep.id} - ${rep.tipo}</h4>
+                        <p><strong>Reporta:</strong> ${rep.ciudadano}</p>
+                        <p><strong>Ubicación:</strong> ${rep.ubicacion}</p>
+                        <p><strong>Descripción:</strong> ${rep.descripcion}</p>
+                        <p><strong>Fecha:</strong> ${rep.fecha}</p>
+                        <p><strong>Estado:</strong> <span style="color: ${rep.estado === 'Pendiente' ? 'red' : 'green'}; font-weight: bold;">${rep.estado}</span></p>
+                        ${rep.estado === 'Pendiente' ? `<button onclick="cambiarEstado(${index})" style="background: #4a1a4d; color: #e8a7c5; border: 2px solid #e8a7c5; padding: 8px; border-radius: 5px; cursor: pointer;">Marcar como Resuelto</button>` : ''}
+                    </div>`;
+            });
+        }
+
+        function cambiarEstado(index) {
+            let reportes = JSON.parse(localStorage.getItem("reportesCOPACI"));
+            reportes[index].estado = "Resuelto ✅";
+            localStorage.setItem("reportesCOPACI", JSON.stringify(reportes));
+            cargarReportesAdmin();
+        }
+
+        // --- LÓGICA DE AVISOS ---
+        function publicarAviso() {
+            const titulo = document.getElementById("tituloAviso").value;
+            const contenido = document.getElementById("contenidoAviso").value;
+
+            if (titulo === "" || contenido === "") {
+                alert("Por favor, llena el título y el contenido del aviso.");
+                return;
+            }
+
+            const nuevoAviso = {
+                id: "AV-" + Math.floor(Math.random() * 9000 + 1000),
+                titulo: titulo,
+                contenido: contenido,
+                autor: "Admin",
+                fecha: new Date().toLocaleDateString('es-MX')
+            };
+
+            let avisos = localStorage.getItem("avisosCOPACI");
+            avisos = avisos ? JSON.parse(avisos) : [];
+            avisos.push(nuevoAviso);
+            localStorage.setItem("avisosCOPACI", JSON.stringify(avisos));
+
+            alert("✅ Aviso publicado con éxito.");
+            document.getElementById("tituloAviso").value = "";
+            document.getElementById("contenidoAviso").value = "";
+            cargarAvisosAdmin();
+        }
+
+        function cargarAvisosAdmin() {
+            let avisos = localStorage.getItem("avisosCOPACI");
+            avisos = avisos ? JSON.parse(avisos) : [];
+            const contenedor = document.getElementById("listaAvisosAdmin");
+
+            if (avisos.length === 0) {
+                contenedor.innerHTML = "<p>No hay avisos publicados aún.</p>";
+                return;
+            }
+
+            contenedor.innerHTML = "";
+            avisos.forEach((aviso, index) => {
+                let autor = aviso.autor ? aviso.autor : "Admin";
+                let colorEtiqueta = autor === "COPACI" ? "#1a4d1a" : "#4a1a4d"; 
+
+                contenedor.innerHTML += `
+                    <div style="border: 2px solid #e8a7c5; padding: 15px; margin-bottom: 15px; border-radius: 8px; background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <span style="background: ${colorEtiqueta}; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">Publicado por: ${autor}</span>
+                        <h4 style="color: #4a1a4d; margin-top: 10px;">${aviso.titulo}</h4>
+                        <p style="font-size: 0.9rem; color: #666;"><strong>Fecha:</strong> ${aviso.fecha}</p>
+                        <p style="font-style: italic; background: #f9f9f9; padding: 10px; border-left: 3px solid #e8a7c5;">"${aviso.contenido}"</p>
+                        <button onclick="eliminarAviso(${index})" style="background: transparent; color: red; border: 1px solid red; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-top: 10px; font-size: 0.8rem;">Eliminar Aviso</button>
+                    </div>
+                `;
+            });
+        }
+
+        function eliminarAviso(index) {
+            if (confirm("¿Seguro que deseas eliminar este aviso?")) {
+                let avisos = JSON.parse(localStorage.getItem("avisosCOPACI"));
+                avisos.splice(index, 1);
+                localStorage.setItem("avisosCOPACI", JSON.stringify(avisos));
+                cargarAvisosAdmin();
+            }
+        }
+
+        // --- LÓGICA DE INFORMES ---
+        function cargarInformesAdmin() {
+            let informes = localStorage.getItem("informesCOPACI");
+            informes = informes ? JSON.parse(informes) : [];
+            const contenedor = document.getElementById("listaInformesAdmin");
+
+            if (informes.length === 0) {
+                contenedor.innerHTML = "<p>No hay informes recibidos aún.</p>";
+                return;
+            }
+
+            contenedor.innerHTML = "";
+            informes.forEach((inf, index) => {
+                let color = inf.estado === 'Pendiente de revisión' ? 'orange' : (inf.estado.includes('Aprobado') ? 'green' : 'red');
+                
+                let botonesRevision = "";
+                if (inf.estado === "Pendiente de revisión") {
+                    botonesRevision = `
+                        <div style="margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 10px;">
+                            <input type="text" id="comentario-${index}" placeholder="Escribe un comentario o justificación..." style="padding: 8px; width: 70%; margin-bottom: 10px; border: 1px solid #4a1a4d; border-radius: 4px;">
+                            <button onclick="revisarInforme(${index}, 'Aprobado ✅')" style="background: #4a1a4d; color: #e8a7c5; border: 2px solid #e8a7c5; padding: 8px; border-radius: 5px; cursor: pointer; margin-right: 10px;">Aprobar Informe</button>
+                            <button onclick="revisarInforme(${index}, 'Rechazado ❌')" style="background: transparent; color: red; border: 2px solid red; padding: 8px; border-radius: 5px; cursor: pointer;">Rechazar Informe</button>
+                        </div>
+                    `;
+                }
+
+                contenedor.innerHTML += `
+                    <div style="border: 2px solid #e8a7c5; padding: 15px; margin-bottom: 15px; border-radius: 8px; background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <h4 style="color: #4a1a4d; margin-top: 0;">${inf.titulo}</h4>
+                        <p><strong>Fecha:</strong> ${inf.fecha}</p>
+                        <p><strong>Estado:</strong> <span style="color: ${color}; font-weight: bold;">${inf.estado}</span></p>
+                        
+                        <p style="font-style: italic; background: #f9f9f9; padding: 10px; border-left: 3px solid #e8a7c5;">"${inf.contenido}"</p>
+                        
+                        <div style="margin-top: 10px;">
+                            <p style="font-size: 0.9rem; margin-bottom: 5px;">Firma del COPACI:</p>
+                            <img src="${inf.firmaCopaci}" style="max-height: 50px;">
+                        </div>
+                        ${inf.comentarioAdmin ? `<p style="color: #4a1a4d; margin-top: 10px; background: #fdf0f6; padding: 8px; border-radius: 4px;"><strong>Tu respuesta:</strong> ${inf.comentarioAdmin}</p>` : ''}
+                        ${botonesRevision}
+                    </div>
+                `;
+            });
+        }
+
+        function revisarInforme(index, nuevoEstado) {
+            const comentario = document.getElementById(`comentario-${index}`).value;
+            if (comentario.trim() === "") {
+                alert("Por favor, escribe un comentario explicando tu decisión.");
+                return;
+            }
+
+            let informes = JSON.parse(localStorage.getItem("informesCOPACI"));
+            informes[index].estado = nuevoEstado;
+            informes[index].comentarioAdmin = comentario;
+            localStorage.setItem("informesCOPACI", JSON.stringify(informes));
+            
+            alert("✅ Informe " + nuevoEstado);
+            cargarInformesAdmin();
+        }
+    </script>
 </body>
 </html>

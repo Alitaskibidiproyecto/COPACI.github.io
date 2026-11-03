@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - COPACI</title>
+    <link rel="stylesheet" href="login.css"> 
+</head>
+<body>
+
+    <header>
+        <h1>COPACI</h1>
+        <p>Registro de Usuarios</p>
+    </header>
+
+    <main>
+        <section id="login">
+            <h2>Crear Cuenta</h2>
+
+            <form id="formRegistro">
+                
+                <!-- SELECTOR DE ROL CON LAS 3 OPCIONES -->
+                <label for="rolRegistro">¿Qué tipo de usuario eres?</label>
+                <select id="rolRegistro" required onchange="mostrarCodigoAdmin()">
+                    <option value="ciudadano">Ciudadano / Vecino</option>
+                    <option value="copaci">Miembro del COPACI</option>
+                    <option value="admin">Administrador</option>
+                </select>
+
+                <br><br>
+
+                <!-- CÓDIGO SECRETO PARA COPACI Y ADMIN -->
+                <div id="divCodigoAdmin" style="display: none;">
+                    <label for="codigoAdmin" style="color: #d4a017;">Código de Autorización:</label>
+                    <input type="password" id="codigoAdmin" placeholder="Ingresa el código secreto">
+                    <br><br>
+                </div>
+
+                <label for="nombre">Nombre completo:</label>
+                <input type="text" id="nombre" placeholder="Ej. Juan Pérez" required>
+                <br><br>
+
+                <label for="direccion">Dirección / Calle:</label>
+                <input type="text" id="direccion" placeholder="Ej. Av. Juárez #123" required>
+                <br><br>
+
+                <label for="correo">Correo electrónico:</label>
+                <input type="email" id="correo" placeholder="ejemplo@correo.com" required>
+                <br><br>
+
+                <label for="passwordReg">Contraseña:</label>
+                <input type="password" id="passwordReg" placeholder="Crea una contraseña" required>
+                <br><br>
+
+                <button type="submit">Registrarme</button>
+                <button type="reset" onclick="document.getElementById('divCodigoAdmin').style.display = 'none';">Limpiar</button>
+            </form>
+
+            <p id="mensajeRegistro"></p>
+            
+            <p style="text-align: center; margin-top: 15px; font-size: 0.95rem;">
+                ¿Ya tienes cuenta? <a href="index.html" style="color: #d4a017; font-weight: bold;">Inicia sesión aquí</a>
+            </p>
+        </section>
+    </main>
+
+    <footer>
+        <p>COPACI - Consejo de Participación Ciudadana</p>
+        <p>&copy; 2025</p>
+    </footer>
+
+    <script>
+        // Función para mostrar el campo secreto si eligen Admin o COPACI
+        function mostrarCodigoAdmin() {
+            const rol = document.getElementById("rolRegistro").value;
+            const divCodigo = document.getElementById("divCodigoAdmin");
+            
+            if (rol === "admin" || rol === "copaci") {
+                divCodigo.style.display = "block";
+            } else {
+                divCodigo.style.display = "none";
+            }
+        }
+
+        document.getElementById("formRegistro").addEventListener("submit", function(event) {
+            event.preventDefault(); 
+
+            const rolElegido = document.getElementById("rolRegistro").value;
+            const codigoSecreto = document.getElementById("codigoAdmin").value;
+            const nombre = document.getElementById("nombre").value.trim();
+            const direccion = document.getElementById("direccion").value.trim();
+            const correo = document.getElementById("correo").value.trim();
+            const password = document.getElementById("passwordReg").value;
+            const mensaje = document.getElementById("mensajeRegistro");
+
+            // Validar código secreto
+            if (rolElegido === "admin" && codigoSecreto !== "admin123") {
+                mensaje.textContent = "❌ Código de Administrador incorrecto.";
+                mensaje.style.color = "#6b1f1f";
+                return;
+            }
+            if (rolElegido === "copaci" && codigoSecreto !== "copaci123") {
+                mensaje.textContent = "❌ Código de COPACI incorrecto.";
+                mensaje.style.color = "#6b1f1f";
+                return;
+            }
+
+            if (!correo.includes("@") || !correo.includes(".")) {
+                mensaje.textContent = "❌ Ingresa un correo electrónico válido.";
+                mensaje.style.color = "#6b1f1f";
+                return;
+            }
+
+            // Creamos el usuario con su rol
+            const nuevoUsuario = {
+                nombre: nombre,
+                direccion: direccion,
+                correo: correo,
+                password: password,
+                rol: rolElegido 
+            };
+
+            let usuariosGuardados = localStorage.getItem("usuariosCOPACI");
+            usuariosGuardados = usuariosGuardados ? JSON.parse(usuariosGuardados) : [];
+
+            const correoExiste = usuariosGuardados.some(user => user.correo === correo);
+            if (correoExiste) {
+                mensaje.textContent = "❌ Este correo ya está registrado.";
+                mensaje.style.color = "#6b1f1f";
+                return;
+            }
+
+            usuariosGuardados.push(nuevoUsuario);
+            localStorage.setItem("usuariosCOPACI", JSON.stringify(usuariosGuardados));
+
+            mensaje.textContent = "✅ ¡Registro exitoso! Redirigiendo al login...";
+            mensaje.style.color = "green";
+
+            setTimeout(() => {
+                window.location.href = "index.html"; 
+            }, 2000);
+        });
+    </script>
+
+</body>
+</html>
